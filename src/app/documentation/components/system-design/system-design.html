@@ -1,0 +1,407 @@
+<div class="max-w-7xl mx-auto px-4 py-8 antialiased">
+  
+  <!-- Top Title Bar -->
+  <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-violet-600 via-indigo-650 to-indigo-700 p-8 md:p-10 shadow-xl mb-8">
+    <div class="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0))]"></div>
+    <div class="relative z-10 max-w-4xl text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/20 text-violet-200 text-[10px] font-bold uppercase tracking-wider border border-violet-400/20 mb-3">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        System Architecture Dashboard
+      </div>
+      <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight">
+        DOM Library <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-emerald-300">Core Blueprint</span>
+      </h1>
+      <p class="mt-3 text-sm md:text-base text-violet-100/90 leading-relaxed font-medium">
+        Complete technical specification of compile steps, library catalog dependencies, automated CI/CD configurations, and NPM registry releases.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Breadcrumb Nav (hidden on desktop, active on tablet/mobile) -->
+  <div class="lg:hidden sticky top-[80px] z-40 bg-slate-950/95 backdrop-blur-md border border-slate-850 rounded-md p-3.5 shadow-xl flex items-center justify-between mb-6">
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-300">
+      <span class="text-slate-550 font-normal uppercase tracking-wider text-[10px]">Blueprint</span>
+      <span class="text-slate-650">/</span>
+      <span class="text-violet-400 flex items-center gap-2">
+        <i [class]="'fa-solid ' + getActiveIcon() + ' text-sm w-4 text-center'"></i>
+        {{ getActiveLabel() }}
+      </span>
+    </div>
+    
+    <div class="relative">
+      <button 
+        (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+        class="flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-md text-[11px] font-extrabold text-slate-350 hover:text-white transition-all">
+        <i class="fa-solid fa-list-ul"></i>
+        Index Menu
+      </button>
+
+      <!-- Glassmorphic Dropdown List Overlay -->
+      <div 
+        *ngIf="mobileMenuOpen()" 
+        class="absolute right-0 mt-2 w-56 z-50 bg-slate-950/98 border border-slate-800 rounded-md shadow-2xl p-2 space-y-1 backdrop-blur-xl animate-fadeIn">
+        @for (item of indexItems; track item.id) {
+          <button 
+            (click)="selectMobileSection(item.id)"
+            [class]="activeSection() === item.id 
+              ? 'bg-violet-650/15 text-violet-300 border-violet-500/20 font-bold' 
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent'"
+            class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs tracking-wide transition-all border text-left">
+            <i [class]="'fa-solid ' + item.fa_icon + ' text-sm w-5 text-center text-slate-450'"></i>
+            <span>{{ item.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout: Split Screen Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- Left Side: Sticky Navigation Index (hidden on mobile, sticky top-28 on desktop) -->
+    <aside class="hidden lg:block lg:col-span-3 sticky top-[100px] z-30 bg-slate-900/50 border border-slate-800/80 rounded-md p-4 shadow-lg backdrop-blur-xl">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest px-3 mb-4 text-left">
+        Documentation Index
+      </h2>
+      
+      <nav class="space-y-1">
+        @for (item of indexItems; track item.id) {
+          <button 
+            (click)="scrollToSection(item.id)"
+            [class]="activeSection() === item.id 
+              ? 'bg-violet-600/10 text-violet-300 border-violet-500/40 font-bold' 
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 border-transparent'"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-xs tracking-wide transition-all duration-200 border text-left">
+            <i [class]="'fa-solid ' + item.fa_icon + ' text-sm w-5 text-center'"></i>
+            <span>{{ item.label }}</span>
+          </button>
+        }
+      </nav>
+
+      <!-- Status Panel -->
+      <div class="mt-6 pt-6 border-t border-slate-800/80 px-3 text-left">
+        <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block mb-2">Build Environment</span>
+        <div class="flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          <span class="text-xs font-semibold text-slate-350">Local Dev Engine Active</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Side: Content Details Panel (9/12 cols) -->
+    <main class="col-span-1 lg:col-span-9 space-y-8">
+      
+      <!-- SECTION 1: SYSTEM ARCHITECTURE -->
+      <section id="architecture" class="bg-slate-900/30 border border-slate-800 rounded-md p-6 md:p-8 shadow-md text-left transition-all duration-300">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+          <div class="w-10 h-10 rounded-md bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <i class="fa-solid fa-layer-group text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">1. Core Architecture &amp; Technologies</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Framework layers and dependency stack configurations</p>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed mb-6">
+          DOM Library Core is designed inside a monorepo workspace containing an application layer (the documentation website showcase) and a compiled, distribution-ready control library. The pipeline utilizes modern web features to keep assets lightweight and lightning-fast.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Tech 1 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-4 rounded-md">
+            <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-microchip text-violet-400"></i>
+              Angular 21 (Zoneless Signals)
+            </h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Change detection runs completely without Zone.js overhead. State changes are managed using high-precision Angular Signals, giving 0ms detection delay.
+            </p>
+          </div>
+
+          <!-- Tech 2 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-4 rounded-md">
+            <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <i class="fa-brands fa-css3-alt text-teal-400"></i>
+              Tailwind CSS v4 Integration
+            </h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Tailwind v4 is configured with PostCSS CSS-first parsing. Built-in library utilities scan components using <code>&#64;source</code> path directives to minimize the production footprint.
+            </p>
+          </div>
+
+          <!-- Tech 3 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-4 rounded-md">
+            <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-cubes text-emerald-400"></i>
+              Standalone Design Pattern
+            </h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Every control component is self-contained. Dependencies are imported locally in the component decorator, completely tree-shaking unused elements.
+            </p>
+          </div>
+
+          <!-- Tech 4 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-4 rounded-md">
+            <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-bolt text-amber-400"></i>
+              ESBuild &amp; Vite Runtime
+            </h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              The local development server is powered by Vite. Distribution packaging is compiled cleanly via <code>&#64;angular/build:application</code> and <code>ng-packagr</code> builders.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: COMPONENT CATALOG -->
+      <section id="components" class="bg-slate-900/30 border border-slate-800 rounded-md p-6 md:p-8 shadow-md text-left transition-all duration-300">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+          <div class="w-10 h-10 rounded-md bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <i class="fa-solid fa-cubes-stacked text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">2. Shared Control Component Catalog</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Categorized list of built-in components and directives</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Group 1 -->
+          <div>
+            <h4 class="text-xs font-extrabold text-violet-400 uppercase tracking-widest mb-3">Form Input Controls</h4>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              @for (c of inputControls; track c) {
+                <div class="px-3 py-2 bg-slate-950/40 border border-slate-850 rounded-md text-[11px] text-slate-355 flex items-center gap-2">
+                  <span class="h-1.5 w-1.5 rounded-full bg-violet-500"></span>
+                  <code>{{ c }}</code>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Group 2 -->
+          <div>
+            <h4 class="text-xs font-extrabold text-teal-400 uppercase tracking-widest mb-3">Containers &amp; Overlays</h4>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              @for (c of containerControls; track c) {
+                <div class="px-3 py-2 bg-slate-950/40 border border-slate-850 rounded-md text-[11px] text-slate-355 flex items-center gap-2">
+                  <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                  <code>{{ c }}</code>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Group 3 -->
+          <div>
+            <h4 class="text-xs font-extrabold text-emerald-400 uppercase tracking-widest mb-3">Utility Directives &amp; Services</h4>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              @for (c of utilityControls; track c) {
+                <div class="px-3 py-2 bg-slate-950/40 border border-slate-850 rounded-md text-[11px] text-slate-355 flex items-center gap-2">
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                  <code>{{ c }}</code>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: NPM PUBLISHING -->
+      <section id="publishing" class="bg-slate-900/30 border border-slate-800 rounded-md p-6 md:p-8 shadow-md text-left transition-all duration-300">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+          <div class="w-10 h-10 rounded-md bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">3. NPM Registry Release Pipeline</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Standard processes for compiling and publishing packages</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          
+          <!-- Core commands list -->
+          <div class="space-y-4">
+            <!-- Build step -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-violet-600/20 text-violet-400 font-bold flex items-center justify-center text-[10px]">1</span>
+                Compile and bundle package
+              </h4>
+              <p class="text-[11px] text-slate-400 pl-7 leading-relaxed">
+                Builds the controls sub-library inside the monorepo workspace to generate an optimized ESM distribution package.
+              </p>
+              <div class="pl-7 relative">
+                <button (click)="copyCode(snippets.npmBuild, 'build')" 
+                        class="absolute top-3 right-5 px-2 py-1 text-[9px] font-bold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 rounded hover:border-slate-700 transition-all">
+                  {{ copyState.build ? 'Copied' : 'Copy' }}
+                </button>
+                <pre class="bg-slate-950 border border-slate-850 p-4 rounded-md font-mono text-[11px] text-emerald-400 overflow-x-auto pr-16"><code>{{ snippets.npmBuild }}</code></pre>
+              </div>
+            </div>
+
+            <!-- Auth step -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-violet-600/20 text-violet-400 font-bold flex items-center justify-center text-[10px]">2</span>
+                Registry Authentication
+              </h4>
+              <p class="text-[11px] text-slate-400 pl-7 leading-relaxed">
+                Logs into your NPM registry (public NPM or private registries like Verdaccio).
+              </p>
+              <div class="pl-7 relative">
+                <button (click)="copyCode(snippets.npmLogin, 'login')" 
+                        class="absolute top-3 right-5 px-2 py-1 text-[9px] font-bold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 rounded hover:border-slate-700 transition-all">
+                  {{ copyState.login ? 'Copied' : 'Copy' }}
+                </button>
+                <pre class="bg-slate-950 border border-slate-850 p-4 rounded-md font-mono text-[11px] text-emerald-400 overflow-x-auto pr-16"><code>{{ snippets.npmLogin }}</code></pre>
+              </div>
+            </div>
+
+            <!-- Publish step -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-violet-600/20 text-violet-400 font-bold flex items-center justify-center text-[10px]">3</span>
+                Registry Publishing
+              </h4>
+              <p class="text-[11px] text-slate-400 pl-7 leading-relaxed">
+                Navigates inside the built output distribution directory and triggers the package upload.
+              </p>
+              <div class="pl-7 relative">
+                <button (click)="copyCode(snippets.npmPublish, 'publish')" 
+                        class="absolute top-3 right-5 px-2 py-1 text-[9px] font-bold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 rounded hover:border-slate-700 transition-all">
+                      {{ copyState.publish ? 'Copied' : 'Copy' }}
+                </button>
+                <pre class="bg-slate-950 border border-slate-850 p-4 rounded-md font-mono text-[11px] text-emerald-400 overflow-x-auto pr-16"><code>{{ snippets.npmPublish }}</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Important Warnings -->
+          <div class="bg-amber-500/10 border border-amber-500/20 p-4 rounded-md flex gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 text-sm"></i>
+            <div class="text-[11px] text-amber-300 leading-relaxed">
+              <strong class="block mb-1">Critical Rule: Version Incrementing</strong>
+              Before running the publish command, you <strong>must</strong> increment the <code>version</code> field inside <code class="bg-slate-950 px-1 py-0.5 border border-slate-800 rounded text-slate-300">src/app/shared/controls/package.json</code> (e.g. from <code>0.0.1</code> to <code>0.0.2</code>). The NPM registry explicitly rejects uploads with duplicate version numbers.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 4: GITHUB HOSTING -->
+      <section id="hosting" class="bg-slate-900/30 border border-slate-800 rounded-md p-6 md:p-8 shadow-md text-left transition-all duration-300">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+          <div class="w-10 h-10 rounded-md bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <i class="fa-solid fa-globe text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">4. GitHub Production Hosting &amp; CI/CD</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Automated pipeline workflows and hosting config workarounds</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            The production website is hosted using **GitHub Pages** with fully automated CI/CD pipelines configured via GitHub Actions.
+          </p>
+
+          <!-- Integration Steps -->
+          <div class="space-y-4">
+            <!-- Action config -->
+            <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-gears text-violet-450"></i>
+                Workflow Pipeline Configuration
+              </h4>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Managed inside <code class="bg-slate-900 px-1 py-0.5 border border-slate-800 rounded text-slate-350">.github/workflows/deploy.yml</code>. Whenever changes are pushed to the <code>main</code> branch, a GitHub Actions runner installs Node.js, compiles the Angular codebase, and publishes built files directly to the <code>gh-pages</code> branch.
+              </p>
+            </div>
+
+            <!-- Deep link redirect -->
+            <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-route text-violet-450"></i>
+                Deep Routing Workaround (404.html redirection)
+              </h4>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Because GitHub Pages hosts static files, refreshing deep routes (like <code>/documentation/install</code>) results in a native 404 response. 
+                To solve this, during compilation our script copies the built <code>index.html</code> as <code>404.html</code> inside the dist folder:
+              </p>
+              <pre class="bg-slate-900 border border-slate-850 p-3 rounded-md font-mono text-[10px] text-emerald-400 overflow-x-auto"><code>cp dist/dom-library/browser/index.html dist/dom-library/browser/404.html</code></pre>
+              <p class="text-[11px] text-slate-400 leading-relaxed mt-1">
+                When GitHub Pages encounters an unrecognized path, it automatically falls back to <code>404.html</code>. Since this file contains our complete Angular app, the runtime loads successfully and Angular Router routes the visitor correctly.
+              </p>
+            </div>
+
+            <!-- Permissions -->
+            <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-violet-450"></i>
+                Workflow Permissions
+              </h4>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Ensure write permissions are active in your GitHub Repository settings:
+                <span class="block mt-2 font-semibold text-slate-350">Settings > Actions > General > Workflow permissions > Select 'Read and write permissions'.</span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 5: ROADMAP -->
+      <section id="roadmap" class="bg-slate-900/30 border border-slate-800 rounded-md p-6 md:p-8 shadow-md text-left transition-all duration-300">
+        <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+          <div class="w-10 h-10 rounded-md bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <i class="fa-solid fa-map text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">5. Future Roadmap &amp; Extensions</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Development horizons and scales for the next versions</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Item 1 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2 text-left">
+            <div class="w-8 h-8 rounded bg-violet-500/10 flex items-center justify-center text-violet-400 text-sm">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200">Theming Extensions</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Support comprehensive dark mode selectors and high-contrast HSL variable sheets suitable for multi-brand deployment platforms.
+            </p>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2 text-left">
+            <div class="w-8 h-8 rounded bg-teal-500/10 flex items-center justify-center text-teal-400 text-sm">
+              <i class="fa-solid fa-vial"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200">Automated Testing</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Integrate Playwright automated visual regression tests and Storybook control dashboards to monitor changes across all 21 core layouts.
+            </p>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="bg-slate-950/60 border border-slate-850 p-5 rounded-md space-y-2 text-left">
+            <div class="w-8 h-8 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-sm">
+              <i class="fa-solid fa-object-group"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200">Custom Elements</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Compile controls into standardized Web Components (using Angular Elements) so they can be run inside React, Vue, or Vanilla JS projects.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+</div>

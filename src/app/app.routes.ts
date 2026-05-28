@@ -158,6 +158,11 @@ if (isDevMode()) {
       loadComponent: () =>
         import('./documentation/components/deploy-steps/deploy-steps').then((m) => m.DeployStepsComponent),
     });
+    mainRoute.children.push({
+      path: 'system-design',
+      loadComponent: () =>
+        import('./documentation/components/system-design/system-design').then((m) => m.SystemDesignComponent),
+    });
   }
 }
 
