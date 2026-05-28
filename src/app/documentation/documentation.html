@@ -1,0 +1,244 @@
+<dom-toast-container></dom-toast-container>
+<div class="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+  
+  <!-- ── Sidebar Navigation ────────────────────────────────────── -->
+  <aside class="w-60 shrink-0 flex flex-col justify-between h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-colors duration-300 select-none">
+    
+    <div class="flex flex-col h-[calc(100vh-45px)] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent] dark:[scrollbar-color:#334155_transparent]">
+      
+      <!-- Sticky Header & Search Area -->
+      <div class="px-4 pt-4 pb-3 border-b border-slate-100 dark:border-slate-800/50 bg-white/95 dark:bg-slate-900/95 sticky top-0 z-10 backdrop-blur-md">
+        
+        <!-- Brand / Logo -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400 animate-pulse shrink-0"></span>
+          <span class="text-[11px] font-extrabold tracking-widest uppercase text-slate-400 dark:text-slate-500">
+            DOM Library
+          </span>
+        </div>
+
+        <!-- Interactive Search Input -->
+        <div class="relative group">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 group-focus-within:text-indigo-500 transition-colors pointer-events-none"></i>
+
+          <input
+            type="text"
+            placeholder="Search controls…"
+            autocomplete="off"
+            [ngModel]="search_query()"
+            (ngModelChange)="search_query.set($event)"
+            (keydown)="onSearchKey($event)"
+            class="w-full pl-8 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 focus:border-indigo-500 transition-all"
+          />
+
+          @if (is_searching()) {
+            <button
+              (click)="clearSearch()"
+              aria-label="Clear search"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 dark:hover:text-slate-400 transition-colors cursor-pointer"
+            >
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+          }
+        </div>
+
+        <!-- Search Result Hit count -->
+        @if (is_searching()) {
+          <p class="mt-2 text-[10px] text-slate-400 dark:text-slate-500 leading-none">
+            @if (hit_count() > 0) {
+              Found <span class="text-indigo-500 dark:text-indigo-400 font-semibold">{{ hit_count() }}</span> result{{ hit_count() !== 1 ? 's' : '' }}
+            } @else {
+              No matching controls
+            }
+          </p>
+        }
+      </div>
+
+      <!-- Navigation Content -->
+      <nav class="flex-1 px-2 py-3 space-y-4">
+        
+        <!-- ── SEARCH RESULTS PANEL ─────────────────── -->
+        @if (is_searching()) {
+          @if (hit_count() === 0) {
+            <div class="px-3 py-10 text-center">
+              <i class="fa-solid fa-magnifying-glass-minus text-3xl text-slate-200 dark:text-slate-800 block mb-2"></i>
+              <p class="text-xs text-slate-400 dark:text-slate-500">
+                No results for
+                <span class="font-semibold text-slate-700 dark:text-slate-300">"{{ search_query() }}"</span>
+              </p>
+              <p class="text-[10px] text-slate-300 dark:text-slate-700 mt-1">Try check standard control terms</p>
+            </div>
+          }
+
+          <!-- Search Pages -->
+          @if (page_hits().length) {
+            <div class="space-y-1">
+              <p class="px-2 pb-1.5 text-[9px] font-extrabold tracking-wider uppercase text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                <i class="fa-solid fa-file-lines text-[10px]"></i>
+                Pages ({{ page_hits().length }})
+              </p>
+
+              @for (hit of page_hits(); track hit.tab.value) {
+                <a
+                  [routerLink]="hit.tab.route"
+                  (click)="clearSearch()"
+                  class="flex items-start gap-2.5 px-3 py-2 rounded-md hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-colors group cursor-pointer"
+                >
+                  <span class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950 border border-indigo-100/50 dark:border-indigo-900/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900 transition-colors">
+                    <i class="fa-solid {{ hit.tab.fa_icon }} text-[10px] text-indigo-500 dark:text-indigo-400"></i>
+                  </span>
+                  <div class="min-w-0">
+                    <span
+                      class="block text-xs font-semibold text-slate-700 dark:text-slate-300 leading-tight"
+                      [innerHTML]="highlight(hit.tab.label)"
+                    ></span>
+                    <span
+                      class="block text-[10px] text-slate-400 dark:text-slate-500 leading-snug mt-0.5 truncate"
+                      [innerHTML]="highlight(hit.tab.description)"
+                    ></span>
+                  </div>
+                </a>
+              }
+            </div>
+          }
+
+          <!-- Search Anchors -->
+          @if (anchor_hits().length) {
+            <div class="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/40">
+              <p class="px-2 pb-1.5 text-[9px] font-extrabold tracking-wider uppercase text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                <i class="fa-solid fa-hashtag text-[10px]"></i>
+                Sections ({{ anchor_hits().length }})
+              </p>
+
+              @for (hit of anchor_hits(); track hit.tab.value + hit.child?.anchor) {
+                <a
+                  [routerLink]="hit.tab.route"
+                  [fragment]="hit.child!.anchor!"
+                  (click)="clearSearch()"
+                  class="flex items-start gap-2.5 px-3 py-2 rounded-md hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 transition-colors group cursor-pointer"
+                >
+                  <span class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950 border border-emerald-100/50 dark:border-emerald-900/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900 transition-colors">
+                    <i class="fa-solid fa-link text-[10px] text-emerald-500 dark:text-emerald-400"></i>
+                  </span>
+                  <div class="min-w-0">
+                    <span
+                      class="block text-xs font-semibold text-slate-700 dark:text-slate-300 leading-tight"
+                      [innerHTML]="highlight(hit.child!.label)"
+                    ></span>
+                    <span class="block text-[10px] text-slate-400 dark:text-slate-500 leading-none mt-0.5 flex items-center gap-1">
+                      <i class="fa-solid fa-chevron-right text-[8px] opacity-60"></i>
+                      {{ hit.tab.label }}
+                    </span>
+                  </div>
+                </a>
+              }
+            </div>
+          }
+        } @else {
+          
+          <!-- ── NORMAL CATEGORIZED NAV ────────────────── -->
+          @for (cat of categories; track cat.id) {
+            <div class="space-y-0.5">
+              
+              <!-- Accordion Category Header Trigger -->
+              <button
+                type="button"
+                (click)="toggleCategory(cat.id)"
+                class="w-full flex items-center justify-between px-3 py-1.5 rounded-md text-[10px] font-extrabold tracking-wider uppercase text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all select-none group cursor-pointer"
+              >
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid {{ cat.fa_icon }} text-[9px] opacity-75 group-hover:opacity-100 transition-opacity"></i>
+                  {{ cat.label }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <!-- Count Badge -->
+                  <span class="px-1.5 py-0.5 text-[9px] font-semibold bg-slate-50 dark:bg-slate-950 text-slate-400 dark:text-slate-500 rounded-full group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950/40 group-hover:text-indigo-500 transition-all">
+                    {{ category_counts()[cat.id] || 0 }}
+                  </span>
+                  <!-- Caret Arrow -->
+                  <i class="fa-solid fa-chevron-down text-[8px] transition-transform duration-200"
+                     [class.rotate-180]="!active_categories()[cat.id]"></i>
+                </div>
+              </button>
+
+              <!-- Collapsible Content Panel -->
+              @if (active_categories()[cat.id]) {
+                <div class="pl-1.5 space-y-0.5 border-l border-slate-100 dark:border-slate-800/40 ml-4 transition-all duration-200">
+                  @for (tab of categorized_tabs()[cat.id] || []; track tab.value) {
+                    <div>
+                      <!-- Route Link -->
+                      <a
+                        #rla="routerLinkActive"
+                        [routerLink]="tab.route"
+                        routerLinkActive="bg-indigo-50/80 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm"
+                        [routerLinkActiveOptions]="{ exact: tab.value === 'overview' }"
+                        class="flex items-center justify-between px-3 py-2 rounded-md text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-150 cursor-pointer"
+                      >
+                        <span class="flex items-center gap-2 truncate">
+                          <i class="fa-solid {{ tab.fa_icon }} text-[11px] w-3.5 text-center opacity-60"
+                             [class.opacity-100]="rla.isActive"
+                             [class.text-indigo-500]="rla.isActive"
+                             [class.dark:text-indigo-400]="rla.isActive"></i>
+                          <span class="truncate">{{ tab.label }}</span>
+                        </span>
+                        @if (rla.isActive) {
+                          <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400 shrink-0"></span>
+                        }
+                      </a>
+
+                      <!-- Nested Secondary Anchor Navigation -->
+                      @if (rla.isActive && tab.children.length) {
+                        <div class="mt-0.5 ml-2.5 pl-2 border-l border-indigo-100 dark:border-indigo-950/50 py-1 space-y-0.5 bg-indigo-50/10 dark:bg-indigo-950/5 rounded-r-md">
+                          @for (child of tab.children; track child.label) {
+                            @if (child.anchor) {
+                              <a
+                                [routerLink]="tab.route"
+                                [fragment]="child.anchor"
+                                class="flex items-center gap-1.5 py-1 pl-1 pr-2 rounded-md text-[11px] text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/40 dark:hover:bg-indigo-950/10 transition-colors"
+                              >
+                                @if (child.indent) {
+                                  <i class="fa-solid fa-circle-dot text-[5px] opacity-40 shrink-0"></i>
+                                } @else {
+                                  <i class="fa-solid fa-minus text-[5px] opacity-30 shrink-0"></i>
+                                }
+                                <span class="truncate">{{ child.label }}</span>
+                              </a>
+                            } @else {
+                              <!-- Anchor Section Separator Title -->
+                              <p class="pl-1 pr-2 pt-1.5 pb-0.5 text-[9px] font-bold tracking-wider uppercase text-indigo-400/40 dark:text-indigo-500/40 select-none flex items-center gap-1">
+                                <i class="fa-solid fa-layer-group text-[8px]"></i>
+                                {{ child.label }}
+                              </p>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </nav>
+    </div>
+
+    <!-- Persistent Bottom Footer -->
+    <div class="px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/90 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 select-none">
+      <div class="flex items-center gap-1.5">
+        <i class="fa-solid fa-circle text-[6px] text-emerald-400 dark:text-emerald-500 animate-pulse"></i>
+        <span>v1.1.0 · Angular 21</span>
+      </div>
+      @if (!is_searching()) {
+        <span class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 text-[9px] text-slate-400 dark:text-slate-500 font-mono shadow-sm">
+          ⌘K
+        </span>
+      }
+    </div>
+  </aside>
+
+  <!-- ── Active Page Content Area ────────────────────────────── -->
+  <main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <router-outlet />
+  </main>
+</div>

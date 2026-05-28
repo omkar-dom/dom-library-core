@@ -1,0 +1,320 @@
+<div class="w-full py-6 px-4 space-y-6">
+
+  <!-- Page header -->
+  <div class="flex items-center gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">{{ component_meta.name }}</h1>
+  </div>
+  <p class="text-gray-500 text-sm -mt-2">Reactive checkbox control — single boolean or multi-select group with vertical / horizontal layout.</p>
+
+  <!-- Tab bar -->
+  <div class="flex border-b border-gray-200 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button" class="pb-2 text-sm font-medium transition-colors"
+        [class.border-b-2]="active_tab() === tab.value"
+        [class.border-blue-600]="active_tab() === tab.value"
+        [class.text-blue-600]="active_tab() === tab.value"
+        [class.text-gray-500]="active_tab() !== tab.value"
+        (click)="active_tab.set(tab.value)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ═══ COMPONENT TAB ═══ -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-10">
+
+      <section id="section-name">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Name</h2>
+        <div class="flex items-center gap-3">
+          <span class="bg-orange-50 text-orange-800 text-base font-mono font-semibold px-3 py-1.5 rounded-md border border-orange-200">{{ component_meta.name }}</span>
+          <span class="text-gray-400 text-xs">{{ component_meta.tag_line }}</span>
+        </div>
+      </section>
+
+      <section id="section-import">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Import</h2>
+        <pre class="bg-gray-900 text-green-300 text-xs rounded p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.import }}</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Add <code class="bg-gray-100 px-1 rounded">DomCheckboxComponent</code> to your component's <code class="bg-gray-100 px-1 rounded">imports</code> array. No module required.</p>
+      </section>
+
+      <section id="section-selector">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Selector</h2>
+        <code class="w-full bg-gray-900 text-yellow-300 text-sm font-mono px-4 py-2 rounded inline-block">{{ component_meta.selector }}</code>
+      </section>
+
+      <section id="section-purpose">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Purpose</h2>
+        <div class="bg-white border border-gray-200 rounded-md p-4 text-sm text-gray-700 space-y-2">
+          @for (p of component_meta.purpose; track $index) { <p>{{ p }}</p> }
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Usage</h2>
+
+        <!-- Single checkbox -->
+        <div id="usage-single" class="border border-gray-200 rounded-md overflow-hidden">
+          <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-600">{{ variants.single.label }}</span>
+            <code class="text-xs px-2 py-0.5 rounded" [class]="variants.single.badge_cls">{{ variants.single.badge }}</code>
+          </div>
+          <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div class="pt-1 space-y-3">
+              <dom-checkbox
+                [form_group]="simple_form"
+                form_control="accept"
+                label="I accept the terms and conditions"
+              />
+              <p class="text-xs text-gray-400">
+                Value: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.get('accept')?.value }}</code>
+                &nbsp;·&nbsp; Valid: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.valid }}</code>
+              </p>
+            </div>
+            <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.single }}</code></pre>
+          </div>
+          <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.single.footer }}</p></div>
+        </div>
+
+        <div class="space-y-6">
+          <h3 class="text-sm font-semibold text-gray-700">Multi-select variants</h3>
+
+          <!-- Multi vertical -->
+          <div id="usage-multi-v" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.multi_v.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.multi_v.badge_cls">{{ variants.multi_v.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-2">
+                <dom-checkbox
+                  [form_group]="variants_form"
+                  form_control="multi_vertical"
+                  label="Favourite fruits"
+                  [options]="fruit_options"
+                  layout="vertical"
+                />
+                <p class="text-xs text-gray-400">Selected: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('multi_vertical')?.value | json }}</code></p>
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.multi_v }}</code></pre>
+            </div>
+            <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.multi_v.footer }}</p></div>
+          </div>
+
+          <!-- Multi horizontal -->
+          <div id="usage-multi-h" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.multi_h.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.multi_h.badge_cls">{{ variants.multi_h.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-2">
+                <dom-checkbox
+                  [form_group]="variants_form"
+                  form_control="multi_horizontal"
+                  label="Preferred colours"
+                  [options]="color_options"
+                  layout="horizontal"
+                />
+                <p class="text-xs text-gray-400">Selected: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('multi_horizontal')?.value | json }}</code></p>
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.multi_h }}</code></pre>
+            </div>
+          </div>
+
+          <!-- Disabled -->
+          <div id="usage-disabled" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.disabled.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.disabled.badge_cls">{{ variants.disabled.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-checkbox
+                  [form_group]="variants_form"
+                  form_control="disabled_field"
+                  label="Options (disabled)"
+                  [options]="disabled_options"
+                  [is_disabled]="true"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.disabled }}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-errors">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Possible validation errors</h2>
+        <p class="text-xs text-gray-500 mb-4">Errors are rendered by <code class="bg-gray-100 px-1 rounded">&lt;dom-error&gt;</code> when the control is <strong>invalid and touched</strong>.</p>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Validator key</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/3">Message shown</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">How to trigger</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (err of possible_errors; track err.validator) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono">{{ err.validator }}</code></td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ err.message }}</td>
+                  <td class="px-4 py-2.5 text-gray-400 font-mono text-[10px]">{{ err.example }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ API TAB ═══ -->
+  @if (active_tab() === 'api') {
+    <div class="space-y-10">
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Inputs</h2>
+        <p class="text-xs text-gray-500 mb-4">All inputs use Angular's signal-based <code class="bg-gray-100 px-1 rounded">input()</code> API. Required inputs are marked.</p>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Input</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/4">Type</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Default</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5">
+                    <code class="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded font-mono">{{ inp.name }}</code>
+                    @if (inp.default_val === 'required') { <span class="ml-1 text-red-500 font-bold text-[10px]">required</span> }
+                  </td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ inp.type }}</td>
+                  <td class="px-4 py-2.5 text-gray-500 font-mono">{{ inp.default_val }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Outputs</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Output</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Payload</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (out of api_outputs; track out.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-green-50 text-green-800 px-1.5 py-0.5 rounded font-mono">{{ out.name }}</code></td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ out.payload }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <pre class="mt-3 bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.outputs }}</code></pre>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Internal mechanics</h2>
+        <div class="space-y-3">
+          @for (note of internal_notes; track note.name) {
+            <div class="border border-gray-200 rounded-md p-4 flex gap-4">
+              <div class="flex-shrink-0 w-52">
+                <code class="text-xs font-mono text-gray-800 font-semibold">{{ note.name }}</code>
+                <p class="text-[10px] text-gray-400 mt-0.5 font-mono">{{ note.kind }}</p>
+              </div>
+              <p class="text-xs text-gray-600">{{ note.description }}</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ VISUAL FLOW TAB ═══ -->
+  @if (active_tab() === 'visual-flow') {
+    <div class="space-y-8">
+      <p class="text-sm text-gray-500">How data flows through <strong>DomCheckboxComponent</strong> — including the two render modes.</p>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Render mode decision</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="border-2 border-orange-200 bg-orange-50 rounded-md p-4">
+            <p class="font-bold text-orange-700 mb-2">options().length === 0</p>
+            <p class="text-orange-600 mb-3">Single checkbox mode</p>
+            <ul class="space-y-1 text-orange-600">
+              <li>• Renders one <code class="bg-white px-1 rounded">&lt;input type="checkbox"&gt;</code></li>
+              <li>• Control value is <code class="bg-white px-1 rounded">boolean</code></li>
+              <li>• Use <code class="bg-white px-1 rounded">Validators.requiredTrue</code></li>
+              <li>• Bound directly via <code class="bg-white px-1 rounded">[formControl]</code></li>
+            </ul>
+          </div>
+          <div class="border-2 border-blue-200 bg-blue-50 rounded-md p-4">
+            <p class="font-bold text-blue-700 mb-2">options().length &gt; 0</p>
+            <p class="text-blue-600 mb-3">Multi-select checkbox group</p>
+            <ul class="space-y-1 text-blue-600">
+              <li>• Renders N labelled checkboxes</li>
+              <li>• Control value is <code class="bg-white px-1 rounded">string[]</code> of IDs</li>
+              <li>• Use <code class="bg-white px-1 rounded">Validators.required</code></li>
+              <li>• State managed via <code class="bg-white px-1 rounded">checked_values</code> signal</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Multi-select toggle flow</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <div class="text-2xl mb-2">1</div>
+            <p class="font-semibold text-blue-800">User clicks checkbox</p>
+            <p class="text-blue-600 mt-1">toggle(opt.id, $event) is called</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-amber-50 border border-amber-200 rounded-md p-3">
+            <div class="text-2xl mb-2">2</div>
+            <p class="font-semibold text-amber-800">Array updated</p>
+            <p class="text-amber-600 mt-1">ID added or removed from checked_values signal</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-orange-50 border border-orange-200 rounded-md p-3">
+            <div class="text-2xl mb-2">3</div>
+            <p class="font-semibold text-orange-800">Control updated</p>
+            <p class="text-orange-600 mt-1">control().setValue(current) syncs the form</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-green-50 border border-green-200 rounded-md p-3">
+            <div class="text-2xl mb-2">4</div>
+            <p class="font-semibold text-green-800">on_change emits</p>
+            <p class="text-green-600 mt-1">Parent receives the updated string[] value</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">CheckboxOption interface</h2>
+        <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>export interface CheckboxOption &#123;
+  id:    string;   // used as the checkbox value and [id] attribute
+  title: string;   // displayed as the option label
+&#125; </code></pre>
+        <p class="text-xs text-gray-500 mt-2">The id_property and title_property inputs allow renaming these fields if your data objects use different keys.</p>
+      </section>
+    </div>
+  }
+
+</div>

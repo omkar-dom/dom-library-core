@@ -1,0 +1,74 @@
+<!-- Wrapper for each of the 8 screen positions -->
+@for (pos of positions; track pos) {
+  @if (toasts_by_position()[pos].length > 0) {
+    <div class="fixed z-[9999] flex flex-col gap-3 w-80 max-w-[90vw] pointer-events-none transition-all duration-300"
+         [ngClass]="{
+           'top-6 left-6 items-start': pos === 'top-left',
+           'top-6 left-1/2 -translate-x-1/2 items-center': pos === 'top-center',
+           'top-6 right-6 items-end': pos === 'top-right',
+           'top-1/2 -translate-y-1/2 left-6 items-start': pos === 'center-left',
+           'top-1/2 -translate-y-1/2 right-6 items-end': pos === 'center-right',
+           'bottom-6 left-6 items-start': pos === 'bottom-left',
+           'bottom-6 left-1/2 -translate-x-1/2 items-center': pos === 'bottom-center',
+           'bottom-6 right-6 items-end': pos === 'bottom-right'
+         }">
+      
+      @for (toast of toasts_by_position()[pos]; track toast.id) {
+        <!-- Single Toast Element -->
+        <div class="w-full flex items-start gap-3 p-4 rounded-md border pointer-events-auto shadow-lg hover:shadow-xl transition-all duration-300 transform scale-100 hover:scale-[1.02] translate-y-0 active:scale-95 animate-toast-entry"
+             [ngClass]="{
+               'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300': toast.type === 'success',
+               'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/40 text-rose-800 dark:text-rose-300': toast.type === 'error',
+               'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-300': toast.type === 'info',
+               'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40 text-amber-800 dark:text-amber-300': toast.type === 'warning'
+             }">
+          
+          <!-- Icon -->
+          <div class="flex-shrink-0 mt-0.5">
+            <i class="fa-solid text-base"
+               [ngClass]="{
+                 'fa-circle-check text-emerald-500': toast.type === 'success',
+                 'fa-circle-xmark text-rose-500': toast.type === 'error',
+                 'fa-circle-info text-blue-500': toast.type === 'info',
+                 'fa-triangle-exclamation text-amber-500': toast.type === 'warning'
+               }"></i>
+          </div>
+
+          <!-- Message -->
+          <div class="flex-1 text-sm font-medium leading-5">
+            {{ toast.message }}
+          </div>
+
+          <!-- Action Button -->
+          @if (toast.action) {
+            <button type="button" 
+                    (click)="handleAction(toast)"
+                    class="flex-shrink-0 text-xs font-bold underline px-1 py-0.5 rounded cursor-pointer transition select-none mr-2 focus:outline-none"
+                    [ngClass]="{
+                      'text-emerald-700 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-200': toast.type === 'success',
+                      'text-rose-700 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-200': toast.type === 'error',
+                      'text-blue-700 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200': toast.type === 'info',
+                      'text-amber-700 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-200': toast.type === 'warning'
+                    }">
+              {{ toast.action.label }}
+            </button>
+          }
+
+          <!-- Close Action -->
+          <button type="button" 
+                  (click)="remove(toast.id)"
+                  class="flex-shrink-0 ml-auto -mx-1.5 -my-1.5 rounded-md p-1.5 inline-flex items-center justify-center transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  [ngClass]="{
+                    'text-emerald-500 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 focus:ring-emerald-500': toast.type === 'success',
+                    'text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-900/40 focus:ring-rose-500': toast.type === 'error',
+                    'text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/40 focus:ring-blue-500': toast.type === 'info',
+                    'text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/40 focus:ring-amber-500': toast.type === 'warning'
+                  }"
+                  aria-label="Dismiss toast">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+      }
+    </div>
+  }
+}

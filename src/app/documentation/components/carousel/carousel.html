@@ -1,0 +1,154 @@
+<div class="space-y-8 max-w-5xl mx-auto px-4 py-6">
+  <!-- Header Title -->
+  <div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+      <i class="fa-solid fa-images text-emerald-500"></i>
+      Carousel Component
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">
+      {{ component_meta.tag_line }}
+    </p>
+  </div>
+
+  <!-- Segmented Showcase Tabs -->
+  <div class="flex border-b border-slate-100 dark:border-slate-800 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button"
+              (click)="active_tab.set(tab.value)"
+              class="pb-3 text-sm font-semibold transition-colors duration-200 border-b-2 cursor-pointer"
+              [ngClass]="{
+                'border-indigo-500 text-indigo-600 dark:text-indigo-400': active_tab() === tab.value,
+                'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300': active_tab() !== tab.value
+              }">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Contents -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-8">
+      
+      <!-- Overview Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Overview</h2>
+        <div class="space-y-3">
+          @for (p of component_meta.purpose; track p) {
+            <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">{{ p }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Live Interactive Showcase -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800 space-y-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Live Demonstrations</h2>
+        
+        <!-- Showcase 1: Simple Image Slider -->
+        <div class="space-y-3">
+          <h3 class="text-base font-bold text-slate-700 dark:text-slate-200">1. Image Carousel — with Auto-Play</h3>
+          <p class="text-xs text-slate-400">Perfect for portfolios, galleries, or banners. Automatically pauses slide on mouse hover.</p>
+          <div class="max-w-2xl">
+            <dom-carousel [items]="simple_images" [autoplay]="true" [interval]="3500" />
+          </div>
+        </div>
+
+        <!-- Showcase 2: Custom Card Template Slider -->
+        <div class="space-y-3 pt-6">
+          <h3 class="text-base font-bold text-slate-700 dark:text-slate-200">2. Custom Templates — Content Projection</h3>
+          <p class="text-xs text-slate-400">Projects complex HTML templates with gradients, buttons, and custom FontAwesome icons.</p>
+          <div class="max-w-2xl">
+            <dom-carousel [items]="custom_cards" [autoplay]="true" [interval]="4000">
+              <ng-template #slideTemplate let-card>
+                <div class="w-full h-full bg-gradient-to-br flex flex-col items-center justify-center text-white text-center p-8 select-none"
+                     [ngClass]="card.color">
+                  <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-md flex items-center justify-center text-2xl shadow-sm mb-4">
+                    <i class="fa-solid" [ngClass]="card.icon"></i>
+                  </div>
+                  <h2 class="text-2xl font-bold tracking-tight">{{ card.title }}</h2>
+                  <p class="text-sm opacity-90 mt-2 max-w-md">{{ card.desc }}</p>
+                </div>
+              </ng-template>
+            </dom-carousel>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Snippets -->
+      <div class="bg-slate-900 dark:bg-slate-950 rounded-md p-6 text-slate-100 space-y-6">
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Import Module</h3>
+          <pre class="overflow-x-auto text-sm text-indigo-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.import }}</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Standard Image Slider</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.simple }}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Custom Slide Projection Template</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.custom }}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (active_tab() === 'api') {
+    <div class="space-y-8 bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+      
+      <!-- Inputs Table -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Inputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Type</th>
+                <th class="py-3 px-2">Default</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ inp.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ inp.type }}</td>
+                  <td class="py-3 px-2 font-mono text-slate-400">{{ inp.default_val }}</td>
+                  <td class="py-3 px-2">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Outputs Table -->
+      <div class="pt-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Outputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Payload</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (out of api_outputs; track out.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ out.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ out.payload }}</td>
+                  <td class="py-3 px-2">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

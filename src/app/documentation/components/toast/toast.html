@@ -1,0 +1,137 @@
+<div class="space-y-8 max-w-5xl mx-auto px-4 py-6">
+  <!-- Header Title -->
+  <div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+      <i class="fa-solid fa-bell text-amber-500"></i>
+      Toast Notification Service
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">
+      {{ component_meta.tag_line }}
+    </p>
+  </div>
+
+  <!-- Segmented Showcase Tabs -->
+  <div class="flex border-b border-slate-100 dark:border-slate-800 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button"
+              (click)="active_tab.set(tab.value)"
+              class="pb-3 text-sm font-semibold transition-colors duration-200 border-b-2 cursor-pointer"
+              [ngClass]="{
+                'border-indigo-500 text-indigo-600 dark:text-indigo-400': active_tab() === tab.value,
+                'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300': active_tab() !== tab.value
+              }">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Contents -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-8">
+      
+      <!-- Overview Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Overview</h2>
+        <div class="space-y-3">
+          @for (p of component_meta.purpose; track p) {
+            <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">{{ p }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Live Interactive Showcase -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800 space-y-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Live Toast Generator</h2>
+        
+        <!-- Position Chooser -->
+        <div class="space-y-3">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Step 1: Choose Screen Position (Select one of the 8 layout spots)
+          </label>
+          <div class="flex flex-wrap gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-md w-fit border border-slate-200/50 dark:border-slate-700/30">
+            @for (pos of positions; track pos) {
+              <button type="button"
+                      (click)="selected_position.set(pos)"
+                      class="px-3 py-1.5 text-xs font-semibold rounded-md transition duration-150 cursor-pointer"
+                      [ngClass]="{
+                        'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm': selected_position() === pos,
+                        'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': selected_position() !== pos
+                      }">
+                {{ pos }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Trigger Buttons -->
+        <div class="space-y-3 pt-2">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Step 2: Trigger Alert Severity Type
+          </label>
+          <div class="flex flex-wrap gap-3">
+            <button (click)="triggerSuccess()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Success Toast
+            </button>
+            <button (click)="triggerError()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-circle-xmark"></i> Error Toast
+            </button>
+            <button (click)="triggerWarning()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation"></i> Warning Toast
+            </button>
+            <button (click)="triggerInfo()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-circle-info"></i> Info Toast
+            </button>
+            <button (click)="triggerActionToast()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-arrow-rotate-left"></i> Action Toast (Undo Demo)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Snippets -->
+      <div class="bg-slate-900 dark:bg-slate-950 rounded-md p-6 text-slate-100 space-y-6">
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Import Module</h3>
+          <pre class="overflow-x-auto text-sm text-indigo-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.import }}</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Component / Service Usage</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.usage }}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (active_tab() === 'api') {
+    <div class="space-y-8 bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+      
+      <!-- Methods Table -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Service Methods</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Method Signature</th>
+                <th class="py-3 px-2">Returns</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (met of api_methods; track met.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ met.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ met.returns }}</td>
+                  <td class="py-3 px-2">{{ met.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

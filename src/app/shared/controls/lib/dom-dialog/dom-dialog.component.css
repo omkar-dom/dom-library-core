@@ -1,0 +1,22 @@
+.dialog-sm {
+  max-width: 380px;
+}
+
+.dialog-md {
+  max-width: 560px;
+}
+
+.dialog-lg {
+  max-width: 768px;
+}
+
+.dialog-xl {
+  max-width: 1024px;
+}
+
+.dialog-full {
+  max-width: 100% !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0px !important;
+}

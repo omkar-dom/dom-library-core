@@ -1,0 +1,310 @@
+<div class="w-full py-6 px-4 space-y-6">
+
+  <!-- Page header -->
+  <div class="flex items-center gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">{{ component_meta.name }}</h1>
+  </div>
+  <p class="text-gray-500 text-sm -mt-2">Reactive radio button group with vertical / horizontal layout and per-option disabled support.</p>
+
+  <!-- Tab bar -->
+  <div class="flex border-b border-gray-200 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button" class="pb-2 text-sm font-medium transition-colors"
+        [class.border-b-2]="active_tab() === tab.value"
+        [class.border-blue-600]="active_tab() === tab.value"
+        [class.text-blue-600]="active_tab() === tab.value"
+        [class.text-gray-500]="active_tab() !== tab.value"
+        (click)="active_tab.set(tab.value)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ═══ COMPONENT TAB ═══ -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-10">
+
+      <section id="section-name">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Name</h2>
+        <div class="flex items-center gap-3">
+          <span class="bg-rose-50 text-rose-800 text-base font-mono font-semibold px-3 py-1.5 rounded-md border border-rose-200">{{ component_meta.name }}</span>
+          <span class="text-gray-400 text-xs">{{ component_meta.tag_line }}</span>
+        </div>
+      </section>
+
+      <section id="section-import">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Import</h2>
+        <pre class="bg-gray-900 text-green-300 text-xs rounded p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.import }}</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Add <code class="bg-gray-100 px-1 rounded">DomRadioComponent</code> to your component's <code class="bg-gray-100 px-1 rounded">imports</code> array. No module required.</p>
+      </section>
+
+      <section id="section-selector">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Selector</h2>
+        <code class="w-full bg-gray-900 text-yellow-300 text-sm font-mono px-4 py-2 rounded inline-block">{{ component_meta.selector }}</code>
+      </section>
+
+      <section id="section-purpose">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Purpose</h2>
+        <div class="bg-white border border-gray-200 rounded-md p-4 text-sm text-gray-700 space-y-2">
+          @for (p of component_meta.purpose; track $index) { <p>{{ p }}</p> }
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Usage</h2>
+
+        <!-- Simple vertical -->
+        <div id="usage-simple" class="border border-gray-200 rounded-md overflow-hidden">
+          <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-600">{{ variants.simple.label }}</span>
+            <code class="text-xs px-2 py-0.5 rounded" [class]="variants.simple.badge_cls">{{ variants.simple.badge }}</code>
+          </div>
+          <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div class="pt-1 space-y-3">
+              <dom-radio
+                [form_group]="simple_form"
+                form_control="priority"
+                label="Priority"
+                [options]="priority_options"
+              />
+              <p class="text-xs text-gray-400">
+                Value: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.get('priority')?.value ?? 'null' }}</code>
+                &nbsp;·&nbsp; Valid: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.valid }}</code>
+              </p>
+            </div>
+            <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.simple }}</code></pre>
+          </div>
+          <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.simple.footer }}</p></div>
+        </div>
+
+        <div class="space-y-6">
+          <h3 class="text-sm font-semibold text-gray-700">Variants</h3>
+
+          <!-- Horizontal -->
+          <div id="usage-horizontal" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.horizontal.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.horizontal.badge_cls">{{ variants.horizontal.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-3">
+                <dom-radio
+                  [form_group]="variants_form"
+                  form_control="horizontal_field"
+                  label="Size"
+                  [options]="size_options"
+                  layout="horizontal"
+                />
+                <p class="text-xs text-gray-400">Selected: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('horizontal_field')?.value ?? 'null' }}</code></p>
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.horizontal }}</code></pre>
+            </div>
+          </div>
+
+          <!-- Disabled option -->
+          <div id="usage-disabled" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.disabled_opt.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.disabled_opt.badge_cls">{{ variants.disabled_opt.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-3">
+                <dom-radio
+                  [form_group]="variants_form"
+                  form_control="disabled_opt_field"
+                  label="Status"
+                  [options]="status_options"
+                />
+                <p class="text-xs text-gray-400">Selected: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('disabled_opt_field')?.value ?? 'null' }}</code></p>
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.disabled_opt }}</code></pre>
+            </div>
+            <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.disabled_opt.footer }}</p></div>
+          </div>
+
+          <!-- Hint -->
+          <div id="usage-hint" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.hint.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.hint.badge_cls">{{ variants.hint.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-3">
+                <dom-radio
+                  [form_group]="variants_form"
+                  form_control="hint_field"
+                  label="Billing cycle"
+                  hint="Annual billing saves 20%"
+                  [options]="hint_options"
+                  layout="horizontal"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.hint }}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-errors">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Possible validation errors</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Validator key</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/3">Message shown</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">How to trigger</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (err of possible_errors; track err.validator) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono">{{ err.validator }}</code></td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ err.message }}</td>
+                  <td class="px-4 py-2.5 text-gray-400 text-[10px]">{{ err.example }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ API TAB ═══ -->
+  @if (active_tab() === 'api') {
+    <div class="space-y-10">
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Inputs</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Input</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/4">Type</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Default</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5">
+                    <code class="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded font-mono">{{ inp.name }}</code>
+                    @if (inp.default_val === 'required') { <span class="ml-1 text-red-500 font-bold text-[10px]">required</span> }
+                  </td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ inp.type }}</td>
+                  <td class="px-4 py-2.5 text-gray-500 font-mono">{{ inp.default_val }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Outputs</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Output</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Payload</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (out of api_outputs; track out.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-green-50 text-green-800 px-1.5 py-0.5 rounded font-mono">{{ out.name }}</code></td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ out.payload }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <pre class="mt-3 bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.outputs }}</code></pre>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Internal mechanics</h2>
+        <div class="space-y-3">
+          @for (note of internal_notes; track note.name) {
+            <div class="border border-gray-200 rounded-md p-4 flex gap-4">
+              <div class="flex-shrink-0 w-52">
+                <code class="text-xs font-mono text-gray-800 font-semibold">{{ note.name }}</code>
+                <p class="text-[10px] text-gray-400 mt-0.5 font-mono">{{ note.kind }}</p>
+              </div>
+              <p class="text-xs text-gray-600">{{ note.description }}</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ VISUAL FLOW TAB ═══ -->
+  @if (active_tab() === 'visual-flow') {
+    <div class="space-y-8">
+      <p class="text-sm text-gray-500">How <strong>DomRadioComponent</strong> binds options, handles selection, and emits events.</p>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Selection flow</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <div class="text-2xl mb-2">1</div>
+            <p class="font-semibold text-blue-800">User selects</p>
+            <p class="text-blue-600 mt-1">Native radio change; Angular sets control value to opt.value</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-amber-50 border border-amber-200 rounded-md p-3">
+            <div class="text-2xl mb-2">2</div>
+            <p class="font-semibold text-amber-800">Validator runs</p>
+            <p class="text-amber-600 mt-1">required / pattern checked synchronously</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-rose-50 border border-rose-200 rounded-md p-3">
+            <div class="text-2xl mb-2">3</div>
+            <p class="font-semibold text-rose-800">User blurs</p>
+            <p class="text-rose-600 mt-1">on_blur emits; control.touched → error eligible</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-green-50 border border-green-200 rounded-md p-3">
+            <div class="text-2xl mb-2">4</div>
+            <p class="font-semibold text-green-800">on_change emits</p>
+            <p class="text-green-600 mt-1">valueChanges subscription emits the selected value to parent</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">RadioOption interface</h2>
+        <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>export interface RadioOption &#123;
+  label:     string;   // text shown next to the radio button
+  value:     any;      // the form control value set when this option is selected
+  disabled?: boolean;  // when true, this specific radio is greyed out and non-selectable
+&#125; </code></pre>
+        <p class="text-xs text-gray-500 mt-2">Individual disabled options do not disable the whole group — the FormControl remains active and other options are still selectable.</p>
+      </section>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Layout comparison</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="border border-gray-200 rounded-md p-4">
+            <p class="font-semibold text-gray-700 mb-2">layout="vertical" (default)</p>
+            <p class="text-gray-500 mb-2">Wrapper CSS: <code class="bg-gray-100 px-1 rounded">flex flex-col gap-2</code></p>
+            <p class="text-gray-400">Best for: 3+ options, long labels, mobile-first forms</p>
+          </div>
+          <div class="border border-gray-200 rounded-md p-4">
+            <p class="font-semibold text-gray-700 mb-2">layout="horizontal"</p>
+            <p class="text-gray-500 mb-2">Wrapper CSS: <code class="bg-gray-100 px-1 rounded">flex flex-row flex-wrap gap-4</code></p>
+            <p class="text-gray-400">Best for: 2–4 short options, compact forms (e.g. Yes / No, billing cycles)</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  }
+
+</div>

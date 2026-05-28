@@ -1,0 +1,6 @@
+/* Custom spacing details for Name Buddy Component */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

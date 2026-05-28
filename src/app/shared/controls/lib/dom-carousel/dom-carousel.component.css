@@ -1,0 +1,7 @@
+/* Custom styles for Carousel slide overlays or visual highlights */
+.scale-105 {
+  transform: scale(1.05);
+}
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1 !important;
+}

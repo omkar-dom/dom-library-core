@@ -1,0 +1,157 @@
+<div class="space-y-8 max-w-5xl mx-auto px-4 py-6">
+  <!-- Header Title -->
+  <div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+      <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
+      Skeleton Loader Directive
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">
+      {{ component_meta.tag_line }}
+    </p>
+  </div>
+
+  <!-- Segmented Showcase Tabs -->
+  <div class="flex border-b border-slate-100 dark:border-slate-800 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button"
+              (click)="active_tab.set(tab.value)"
+              class="pb-3 text-sm font-semibold transition-colors duration-200 border-b-2 cursor-pointer"
+              [ngClass]="{
+                'border-indigo-500 text-indigo-600 dark:text-indigo-400': active_tab() === tab.value,
+                'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300': active_tab() !== tab.value
+              }">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Contents -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-8">
+      
+      <!-- Overview Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Overview</h2>
+        <div class="space-y-3">
+          @for (p of component_meta.purpose; track p) {
+            <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">{{ p }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Live Interactive Showcase -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800 space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Live Shimmer Sandbox</h2>
+          <!-- Toggle Button -->
+          <button (click)="toggleLoading()" 
+                  class="px-5 py-2.5 rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2"
+                  [ngClass]="is_loading() ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'">
+            <i class="fa-solid" [ngClass]="is_loading() ? 'fa-play' : 'fa-pause'"></i>
+            {{ is_loading() ? 'Deactivate Loading' : 'Activate Loading' }}
+          </button>
+        </div>
+        
+        <p class="text-slate-500 dark:text-slate-400 text-sm">
+          Notice how the avatar, name, bio, and save details buttons shimmer gracefully when active.
+        </p>
+
+        <!-- Skeleton Targets Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          
+          <!-- Card 1: User Profile Card -->
+          <div [domSkeleton]="is_loading()" class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-md p-6 flex flex-col gap-4 shadow-sm">
+            <div class="flex items-center gap-4">
+              <!-- Avatar placeholder -->
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" 
+                   class="w-12 h-12 rounded-full object-cover select-none" alt="User avatar" />
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base truncate">Samantha Smith</h3>
+                <span class="text-xs text-indigo-500 dark:text-indigo-400 font-medium">Senior UX Lead</span>
+              </div>
+            </div>
+            
+            <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+              Samantha is designing high-end design workflows for reactive Angular application controls and multi-theme design grids.
+            </p>
+
+            <div class="flex gap-2 pt-2">
+              <button class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-md">View Full Profile</button>
+              <button class="px-4 py-2 border border-slate-200 text-slate-700 text-xs font-semibold rounded-md">Send Message</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Workspace Project Status -->
+          <div [domSkeleton]="is_loading()" class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-md p-6 flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Project Alpha</span>
+                <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 text-2xs font-bold rounded">Deploying</span>
+              </div>
+              <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-2">Renaming Library Migration</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">
+                Successfully migrating packages to dom-library core standalones.
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-2 pt-6">
+              <div class="flex -space-x-2">
+                <div class="w-6 h-6 rounded-full bg-slate-200 border-2 border-white dark:border-slate-900 text-3xs font-extrabold flex items-center justify-center">JD</div>
+                <div class="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white dark:border-slate-900 text-3xs font-extrabold flex items-center justify-center text-indigo-600">SS</div>
+              </div>
+              <span class="text-xs text-slate-400 ml-auto font-medium">Updated 4m ago</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Code Snippets -->
+      <div class="bg-slate-900 dark:bg-slate-950 rounded-md p-6 text-slate-100 space-y-6">
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Import Module</h3>
+          <pre class="overflow-x-auto text-sm text-indigo-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.import }}</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Sample Template Usage</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.usage }}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (active_tab() === 'api') {
+    <div class="space-y-8 bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+      
+      <!-- Inputs Table -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Inputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Type</th>
+                <th class="py-3 px-2">Default</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ inp.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ inp.type }}</td>
+                  <td class="py-3 px-2 font-mono text-slate-400">{{ inp.default_val }}</td>
+                  <td class="py-3 px-2">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

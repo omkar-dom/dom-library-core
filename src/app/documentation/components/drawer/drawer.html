@@ -1,0 +1,190 @@
+<div class="space-y-8 max-w-5xl mx-auto px-4 py-6">
+  <!-- Header Title -->
+  <div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+      <i class="fa-solid fa-rectangle-list text-indigo-500"></i>
+      Drawer Component
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">
+      {{ component_meta.tag_line }}
+    </p>
+  </div>
+
+  <!-- Segmented Showcase Tabs -->
+  <div class="flex border-b border-slate-100 dark:border-slate-800 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button"
+              (click)="active_tab.set(tab.value)"
+              class="pb-3 text-sm font-semibold transition-colors duration-200 border-b-2 cursor-pointer"
+              [ngClass]="{
+                'border-indigo-500 text-indigo-600 dark:text-indigo-400': active_tab() === tab.value,
+                'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300': active_tab() !== tab.value
+              }">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Contents -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-8">
+      
+      <!-- Overview Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Overview</h2>
+        <div class="space-y-3">
+          @for (p of component_meta.purpose; track p) {
+            <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">{{ p }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Live Interactive Showcase -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800 space-y-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Interactive Demos</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Click any button below to trigger drawers in different positions.</p>
+        
+        <div class="flex flex-wrap gap-4 pt-2">
+          <button (click)="is_left_open.set(true)" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right"></i> Slide Left
+          </button>
+          <button (click)="is_right_open.set(true)" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+            Slide Right <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <button (click)="is_top_open.set(true)" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+            <i class="fa-solid fa-arrow-down"></i> Slide Top
+          </button>
+          <button (click)="is_bottom_open.set(true)" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer flex items-center gap-2">
+            Slide Bottom <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Code Snippets -->
+      <div class="bg-slate-900 dark:bg-slate-950 rounded-md p-6 text-slate-100 space-y-6">
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Import Module</h3>
+          <pre class="overflow-x-auto text-sm text-indigo-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.import }}</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Sample Template Usage</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.usage }}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (active_tab() === 'api') {
+    <div class="space-y-8 bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+      
+      <!-- Inputs Table -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Inputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Type</th>
+                <th class="py-3 px-2">Default</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ inp.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ inp.type }}</td>
+                  <td class="py-3 px-2 font-mono text-slate-400">{{ inp.default_val }}</td>
+                  <td class="py-3 px-2">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Outputs Table -->
+      <div class="pt-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Outputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Payload</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (out of api_outputs; track out.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ out.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ out.payload }}</td>
+                  <td class="py-3 px-2">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- Drawers Layout Elements -->
+
+<dom-drawer [is_open]="is_left_open()" position="left" title="Left Menu Panel" (on_close)="is_left_open.set(false)">
+  <div class="space-y-4">
+    <p>This panel slides in from the <strong>left</strong> edge of the screen.</p>
+    <p>Ideal for collapsible multi-level sidebar navigation menus, context dashboards, or simple mobile configurations.</p>
+  </div>
+  <div drawer-footer>
+    <button (click)="is_left_open.set(false)" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md cursor-pointer transition">Close</button>
+  </div>
+</dom-drawer>
+
+<dom-drawer [is_open]="is_right_open()" position="right" title="Profile Details" (on_close)="is_right_open.set(false)">
+  <div class="space-y-6">
+    <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
+      <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">JD</div>
+      <div>
+        <h4 class="font-semibold text-slate-800">John Doe</h4>
+        <span class="text-xs text-slate-400">john.doe@example.com</span>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <p class="text-sm text-slate-500">This panel slides in from the <strong>right</strong> edge.</p>
+      <p class="text-sm text-slate-500">This is the default positioning. Excellent for editing detail sheets, full-form side flows, or profile configurations.</p>
+    </div>
+  </div>
+  <div drawer-footer>
+    <button (click)="is_right_open.set(false)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md cursor-pointer transition">Save Details</button>
+    <button (click)="is_right_open.set(false)" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md cursor-pointer transition">Cancel</button>
+  </div>
+</dom-drawer>
+
+<dom-drawer [is_open]="is_top_open()" position="top" title="Global Alerts Search" (on_close)="is_top_open.set(false)">
+  <div class="space-y-4">
+    <p>This panel slides down from the <strong>top</strong> edge of the screen.</p>
+    <p>Often used for high-importance global search dropdown bars, temporary announcements, or multi-option filtering selectors.</p>
+  </div>
+  <div drawer-footer>
+    <button (click)="is_top_open.set(false)" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md cursor-pointer transition">Acknowledge</button>
+  </div>
+</dom-drawer>
+
+<dom-drawer [is_open]="is_bottom_open()" position="bottom" title="Action Menu Settings" (on_close)="is_bottom_open.set(false)">
+  <div class="space-y-4">
+    <p>This panel slides up from the <strong>bottom</strong> edge of the screen.</p>
+    <p>Particularly useful for mobile viewport action sheets, media share panels, and quick settings sheets.</p>
+  </div>
+  <div drawer-footer>
+    <button (click)="is_bottom_open.set(false)" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md cursor-pointer transition">Confirm Reset</button>
+    <button (click)="is_bottom_open.set(false)" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md cursor-pointer transition">Close</button>
+  </div>
+</dom-drawer>

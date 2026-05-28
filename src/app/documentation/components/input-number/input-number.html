@@ -1,0 +1,470 @@
+<div class="w-full py-6 px-4 space-y-6">
+
+  <!-- Page header -->
+  <div class="flex items-center gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">{{ component_meta.name }}</h1>
+  </div>
+  <p class="text-gray-500 text-sm -mt-2">Reactive numeric input with integer / decimal modes, range constraints, and built-in validation.</p>
+
+  <!-- Tab bar -->
+  <div class="flex border-b border-gray-200 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button
+        type="button"
+        class="pb-2 text-sm font-medium transition-colors"
+        [class.border-b-2]="active_tab() === tab.value"
+        [class.border-blue-600]="active_tab() === tab.value"
+        [class.text-blue-600]="active_tab() === tab.value"
+        [class.text-gray-500]="active_tab() !== tab.value"
+        (click)="active_tab.set(tab.value)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ═══════════════════════════════════════════ COMPONENT TAB ═══ -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-10">
+
+      <!-- 1. Name -->
+      <section id="section-name">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Name</h2>
+        <div class="flex items-center gap-3">
+          <span class="bg-purple-50 text-purple-800 text-base font-mono font-semibold px-3 py-1.5 rounded-md border border-purple-200">{{ component_meta.name }}</span>
+          <span class="text-gray-400 text-xs">{{ component_meta.tag_line }}</span>
+        </div>
+      </section>
+
+      <!-- 2. Import -->
+      <section id="section-import">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Import</h2>
+        <pre class="bg-gray-900 text-green-300 text-xs rounded p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.import }}</code></pre>
+        <p class="text-xs text-gray-400 mt-2">
+          Add <code class="bg-gray-100 px-1 rounded">DomInputNumberComponent</code> to your component's
+          <code class="bg-gray-100 px-1 rounded">imports</code> array. No module required — it is fully standalone.
+        </p>
+      </section>
+
+      <!-- 3. Selector -->
+      <section id="section-selector">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Selector</h2>
+        <code class="w-full bg-gray-900 text-yellow-300 text-sm font-mono px-4 py-2 rounded inline-block">{{ component_meta.selector }}</code>
+      </section>
+
+      <!-- 4. Purpose -->
+      <section id="section-purpose">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Purpose</h2>
+        <div class="bg-white border border-gray-200 rounded-md p-4 text-sm text-gray-700 space-y-2">
+          @for (p of component_meta.purpose; track $index) {
+            <p>{{ p }}</p>
+          }
+        </div>
+      </section>
+
+      <!-- 5. Usage -->
+      <section class="space-y-8">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Usage</h2>
+
+        <!-- Simple demo -->
+        <div id="usage-simple" class="border border-gray-200 rounded-md overflow-hidden">
+          <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-600">{{ variants.simple.label }}</span>
+            <code class="text-xs px-2 py-0.5 rounded" [class]="variants.simple.badge_cls">{{ variants.simple.badge }}</code>
+          </div>
+          <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div class="pt-1 space-y-3">
+              <dom-input-number
+                [form_group]="simple_form"
+                form_control="quantity"
+                label="Quantity"
+                placeholder="Enter quantity"
+              />
+              <p class="text-xs text-gray-400">
+                Value: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.get('quantity')?.value ?? '(empty)' }}</code>
+                &nbsp;·&nbsp;
+                Valid: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.valid }}</code>
+              </p>
+            </div>
+            <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.simple }}</code></pre>
+          </div>
+          <div class="px-4 pb-3">
+            <p class="text-xs text-gray-400">{{ variants.simple.footer }}</p>
+          </div>
+        </div>
+
+        <!-- Type variants -->
+        <div class="space-y-6">
+
+          <!-- Integer min/max -->
+          <div id="usage-minmax" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.minmax.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.minmax.badge_cls">{{ variants.minmax.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-input-number
+                  [form_group]="variants_form"
+                  form_control="minmax_field"
+                  label="Score (0 – 100)"
+                  placeholder="0 to 100"
+                  [min]="0"
+                  [max]="100"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.minmax }}</code></pre>
+            </div>
+            <div class="px-4 pb-3">
+              <p class="text-xs text-gray-400">{{ variants.minmax.footer }}</p>
+            </div>
+          </div>
+
+          <!-- Decimal -->
+          <div id="usage-decimal" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.decimal.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.decimal.badge_cls">{{ variants.decimal.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-input-number
+                  [form_group]="variants_form"
+                  form_control="decimal_field"
+                  label="Price"
+                  placeholder="0.00"
+                  mode="decimal"
+                  [decimal_places]="2"
+                  [step]="0.01"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.decimal }}</code></pre>
+            </div>
+            <div class="px-4 pb-3">
+              <p class="text-xs text-gray-400">{{ variants.decimal.footer }}</p>
+            </div>
+          </div>
+
+          <!-- Readonly -->
+          <div id="usage-readonly" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.readonly.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.readonly.badge_cls">{{ variants.readonly.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-input-number
+                  [form_group]="variants_form"
+                  form_control="readonly_field"
+                  label="Reference value"
+                  [is_readonly]="true"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.readonly }}</code></pre>
+            </div>
+          </div>
+
+          <!-- Hint -->
+          <div id="usage-hint" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.hint.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.hint.badge_cls">{{ variants.hint.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-5">
+                <dom-input-number
+                  [form_group]="variants_form"
+                  form_control="hint_field"
+                  label="Weight (kg)"
+                  placeholder="e.g. 75"
+                  hint="Enter weight in kilograms"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.hint }}</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 6. Possible errors -->
+      <section id="section-errors">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Possible validation errors</h2>
+        <p class="text-xs text-gray-500 mb-4">
+          All errors are rendered automatically by <code class="bg-gray-100 px-1 rounded">&lt;dom-error&gt;</code> when the control is
+          <strong>invalid and touched</strong>. The message is derived from <code class="bg-gray-100 px-1 rounded">getErrorMessage()</code>.
+        </p>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/4">Validator key</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-2/5">Message shown</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">How to trigger</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (err of possible_errors; track err.validator) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono">{{ err.validator }}</code></td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ err.message }}</td>
+                  <td class="px-4 py-2.5 text-gray-400 font-mono">{{ err.example }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Custom validator errors are shown using the message property of the error object, or <em>"Invalid value"</em> as fallback.</p>
+      </section>
+
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════ API TAB ═══ -->
+  @if (active_tab() === 'api') {
+    <div class="space-y-10">
+
+      <!-- Inputs -->
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Inputs</h2>
+        <p class="text-xs text-gray-500 mb-4">
+          All inputs use Angular's signal-based <code class="bg-gray-100 px-1 rounded">input()</code> API.
+          Required inputs are marked — the component will throw at runtime if omitted.
+        </p>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Input</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/4">Type</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Default</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5">
+                    <code class="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded font-mono">{{ inp.name }}</code>
+                    @if (inp.default_val === 'required') {
+                      <span class="ml-1 text-red-500 font-bold text-[10px]">required</span>
+                    }
+                  </td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ inp.type }}</td>
+                  <td class="px-4 py-2.5 text-gray-500 font-mono">{{ inp.default_val }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Outputs -->
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Outputs</h2>
+        <p class="text-xs text-gray-500 mb-4">
+          Both outputs use Angular's <code class="bg-gray-100 px-1 rounded">output()</code> API and can be listened to with standard event binding.
+        </p>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Output</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Payload</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (out of api_outputs; track out.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-green-50 text-green-800 px-1.5 py-0.5 rounded font-mono">{{ out.name }}</code></td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ out.payload }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <pre class="mt-3 bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.outputs }}</code></pre>
+      </section>
+
+      <!-- Internals -->
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Internal mechanics</h2>
+        <p class="text-xs text-gray-500 mb-4">These are not exposed as inputs or outputs but are useful to understand for debugging and extension.</p>
+        <div class="space-y-3">
+          @for (note of internal_notes; track note.name) {
+            <div class="border border-gray-200 rounded-md p-4 flex gap-4">
+              <div class="flex-shrink-0 w-52">
+                <code class="text-xs font-mono text-gray-800 font-semibold">{{ note.name }}</code>
+                <p class="text-[10px] text-gray-400 mt-0.5 font-mono">{{ note.kind }}</p>
+              </div>
+              <p class="text-xs text-gray-600">{{ note.description }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════ VISUAL FLOW TAB ═══ -->
+  @if (active_tab() === 'visual-flow') {
+    <div class="space-y-8">
+
+      <p class="text-sm text-gray-500">How data and state flow through <strong>DomInputNumberComponent</strong> from parent to DOM and back.</p>
+
+      <!-- Data flow diagram -->
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Data flow</h2>
+        <div class="space-y-3">
+
+          <div class="border-2 border-blue-300 bg-blue-50 rounded-md p-4">
+            <p class="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">Parent component</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="bg-white border border-blue-200 text-blue-800 px-2 py-1 rounded font-mono">FormGroup</span>
+              <span class="bg-white border border-blue-200 text-blue-800 px-2 py-1 rounded font-mono">form_control key</span>
+              <span class="bg-white border border-blue-200 text-blue-800 px-2 py-1 rounded font-mono">label / placeholder / hint</span>
+              <span class="bg-white border border-blue-200 text-blue-800 px-2 py-1 rounded font-mono">mode / min / max / step / decimal_places</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center text-gray-400">
+            <div class="w-px h-4 bg-gray-300"></div>
+            <div class="text-xs bg-gray-100 border border-gray-200 rounded px-2 py-0.5">&#64;input() signals</div>
+            <div class="w-px h-4 bg-gray-300"></div>
+            <div class="text-gray-300 text-lg">▼</div>
+          </div>
+
+          <div class="border-2 border-gray-300 bg-white rounded-md p-4 space-y-4">
+            <p class="text-xs font-bold text-gray-700 uppercase tracking-wide">DomInputNumberComponent</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="bg-purple-50 border border-purple-200 rounded-md p-3">
+                <p class="font-semibold text-purple-700 mb-1.5">Computed signals</p>
+                <ul class="space-y-1 text-purple-600">
+                  <li><code class="bg-white px-1 rounded text-[10px]">control</code> — resolves FormControl from group</li>
+                  <li><code class="bg-white px-1 rounded text-[10px]">is_required</code> — checks Validators.required</li>
+                </ul>
+              </div>
+              <div class="bg-amber-50 border border-amber-200 rounded-md p-3">
+                <p class="font-semibold text-amber-700 mb-1.5">Effects (side effects)</p>
+                <ul class="space-y-1 text-amber-600">
+                  <li><code class="bg-white px-1 rounded text-[10px]">is_disabled</code> → ctrl.disable / enable</li>
+                  <li>valueChanges → emit on_change</li>
+                </ul>
+              </div>
+              <div class="bg-green-50 border border-green-200 rounded-md p-3">
+                <p class="font-semibold text-green-700 mb-1.5">Methods</p>
+                <ul class="space-y-1 text-green-600">
+                  <li><code class="bg-white px-1 rounded text-[10px]">onBlur()</code> — decimal formatting + emit on_blur</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center text-gray-400">
+            <div class="w-px h-4 bg-gray-300"></div>
+            <div class="text-xs bg-gray-100 border border-gray-200 rounded px-2 py-0.5">template bindings</div>
+            <div class="w-px h-4 bg-gray-300"></div>
+            <div class="text-gray-300 text-lg">▼</div>
+          </div>
+
+          <div class="border-2 border-gray-200 bg-gray-50 rounded-md p-4 space-y-2">
+            <p class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Rendered DOM</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded font-mono">&lt;label&gt; + asterisk</span>
+              <span class="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded font-mono">&lt;input type="number"&gt;</span>
+              <span class="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded font-mono">min / max / step attrs</span>
+              <span class="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded font-mono">inputMode binding</span>
+              <span class="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded font-mono">hint &lt;p&gt;</span>
+              <span class="bg-red-50 border border-red-200 text-red-700 px-2 py-1 rounded font-mono">&lt;dom-error&gt;</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center">
+            <div class="text-gray-300 text-lg">▲</div>
+            <div class="w-px h-4 bg-gray-300"></div>
+            <div class="text-xs bg-gray-100 border border-gray-200 rounded px-2 py-0.5 text-gray-500">&#64;output() events</div>
+            <div class="w-px h-4 bg-gray-300"></div>
+          </div>
+
+          <div class="border-2 border-green-200 bg-green-50 rounded-md p-4">
+            <p class="text-xs font-bold text-green-700 uppercase tracking-wide mb-2">Events emitted to parent</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="bg-white border border-green-200 text-green-800 px-2 py-1 rounded font-mono">on_change(value)</span>
+              <span class="bg-white border border-green-200 text-green-800 px-2 py-1 rounded font-mono">on_blur(formatted value)</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Validation flow -->
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Validation &amp; decimal formatting flow</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <div class="text-2xl mb-2">1</div>
+            <p class="font-semibold text-blue-800">User types</p>
+            <p class="text-blue-600 mt-1">Input event fires; Angular updates the FormControl value</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-amber-50 border border-amber-200 rounded-md p-3">
+            <div class="text-2xl mb-2">2</div>
+            <p class="font-semibold text-amber-800">Validator runs</p>
+            <p class="text-amber-600 mt-1">min / max / required checked synchronously</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-orange-50 border border-orange-200 rounded-md p-3">
+            <div class="text-2xl mb-2">3</div>
+            <p class="font-semibold text-orange-800">User blurs</p>
+            <p class="text-orange-600 mt-1">onBlur() formats decimal, sets value silently, emits on_blur</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-red-50 border border-red-200 rounded-md p-3">
+            <div class="text-2xl mb-2">4</div>
+            <p class="font-semibold text-red-800">Error renders</p>
+            <p class="text-red-600 mt-1">&lt;dom-error&gt; shows message via getErrorMessage()</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mode behaviour table -->
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Mode behaviour summary</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">mode value</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">inputMode</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">On blur</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">step default</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Typical use</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2.5 font-mono text-blue-700">'integer'</td>
+                <td class="px-4 py-2.5 text-gray-600">numeric</td>
+                <td class="px-4 py-2.5 text-gray-400">no formatting</td>
+                <td class="px-4 py-2.5 text-gray-600">1</td>
+                <td class="px-4 py-2.5 text-gray-500">Counts, quantities, ages</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2.5 font-mono text-blue-700">'decimal'</td>
+                <td class="px-4 py-2.5 text-gray-600">decimal</td>
+                <td class="px-4 py-2.5 text-green-600 font-semibold">parseFloat().toFixed(decimal_places)</td>
+                <td class="px-4 py-2.5 text-gray-600">1 (use 0.01 for currency)</td>
+                <td class="px-4 py-2.5 text-gray-500">Prices, weights, measurements</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  }
+
+</div>

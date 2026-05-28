@@ -1,0 +1,550 @@
+<!-- ── PREMIUM SHOWCASE DASHBOARD ── -->
+<div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 space-y-8 transition-colors duration-300">
+  
+  <!-- Header Title Banner -->
+  <div class="border-b border-slate-200 dark:border-slate-800 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
+        <i class="fa-solid fa-layer-group text-indigo-600 dark:text-indigo-500"></i>
+        DOM Showcase Environment
+      </h1>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        A production-grade, zero-dependency suite of highly interactive custom standalone controls.
+      </p>
+    </div>
+    
+    <!-- Environment Status Pill -->
+    <div class="flex items-center gap-2 self-start md:self-auto bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md px-3 py-1 shadow-sm">
+      <i class="fa-solid fa-circle text-[6px] text-emerald-500 animate-pulse"></i>
+      <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">Sandbox Playground Active</span>
+    </div>
+  </div>
+
+  <!-- Redesigned Tab Switcher Menu -->
+  <div class="flex border-b border-slate-200 dark:border-slate-800 gap-1 select-none">
+    <button
+      type="button"
+      (click)="active_tab.set('form')"
+      class="flex items-center gap-2 px-4 py-2 text-xs font-bold border-b-2 transition-all cursor-pointer focus:outline-none"
+      [class.border-indigo-600]="active_tab() === 'form'"
+      [class.text-indigo-600]="active_tab() === 'form'"
+      [class.dark:text-indigo-400]="active_tab() === 'form'"
+      [class.dark:border-indigo-400]="active_tab() === 'form'"
+      [class.border-transparent]="active_tab() !== 'form'"
+      [class.text-slate-500]="active_tab() !== 'form'"
+      [class.hover:text-slate-800]="active_tab() !== 'form'"
+      [class.dark:hover:text-slate-200]="active_tab() !== 'form'"
+    >
+      <i class="fa-solid fa-square-poll-horizontal text-sm"></i>
+      Form Controls
+    </button>
+    <button
+      type="button"
+      (click)="active_tab.set('overlays')"
+      class="flex items-center gap-2 px-4 py-2 text-xs font-bold border-b-2 transition-all cursor-pointer focus:outline-none"
+      [class.border-indigo-600]="active_tab() === 'overlays'"
+      [class.text-indigo-600]="active_tab() === 'overlays'"
+      [class.dark:text-indigo-400]="active_tab() === 'overlays'"
+      [class.dark:border-indigo-400]="active_tab() === 'overlays'"
+      [class.border-transparent]="active_tab() !== 'overlays'"
+      [class.text-slate-500]="active_tab() !== 'overlays'"
+      [class.hover:text-slate-800]="active_tab() !== 'overlays'"
+      [class.dark:hover:text-slate-200]="active_tab() !== 'overlays'"
+    >
+      <i class="fa-solid fa-clone text-sm"></i>
+      Overlays &amp; Media
+    </button>
+    <button
+      type="button"
+      (click)="active_tab.set('utilities')"
+      class="flex items-center gap-2 px-4 py-2 text-xs font-bold border-b-2 transition-all cursor-pointer focus:outline-none"
+      [class.border-indigo-600]="active_tab() === 'utilities'"
+      [class.text-indigo-600]="active_tab() === 'utilities'"
+      [class.dark:text-indigo-400]="active_tab() === 'utilities'"
+      [class.dark:border-indigo-400]="active_tab() === 'utilities'"
+      [class.border-transparent]="active_tab() !== 'utilities'"
+      [class.text-slate-500]="active_tab() !== 'utilities'"
+      [class.hover:text-slate-800]="active_tab() !== 'utilities'"
+      [class.dark:hover:text-slate-200]="active_tab() !== 'utilities'"
+    >
+      <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+      Micro-Utilities
+    </button>
+  </div>
+
+  <!-- ── TAB CONTENT 1: FORM CONTROLS PLAYGROUND ── -->
+  @if (active_tab() === 'form') {
+    <div class="flex flex-col xl:flex-row gap-6">
+      
+      <!-- Left: SPACIOUS MODULAR FORM CARD -->
+      <div class="flex-1 min-w-0">
+        <div class="bg-white dark:bg-slate-900 rounded-md shadow-sm border border-slate-200/80 dark:border-slate-800/80 overflow-hidden transition-colors duration-300">
+          
+          <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-input-numeric text-indigo-500"></i>
+              <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Interactive Reactive Form Fields</h3>
+            </div>
+            
+            <!-- Horizontal/Vertical Preference Toggle using Custom select-button -->
+            <div class="scale-90 origin-right">
+              <dom-select-button
+                [form_group]="form"
+                [form_control]="'layout_mode'"
+                [options]="select_button_layout_options"
+                label=""
+              />
+            </div>
+          </div>
+
+          <div class="p-6 md:p-8 space-y-12">
+            
+            <!-- Sub-Section A: 👤 Personal Profile Identity -->
+            <section class="space-y-6">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
+                <i class="fa-solid fa-user-circle text-indigo-400"></i> 1. Personal Identity Profile
+              </h4>
+              
+              <!-- Custom Name Buddy integration -->
+              <dom-name-buddy
+                [form_group]="form"
+                salutation_control="salutation"
+                first_name_control="first_name"
+                middle_name_control="middle_name"
+                last_name_control="last_name"
+                [hide_salutation]="false"
+                [hide_middle_name]="false"
+                label="Identity Coordinates"
+              />
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                <dom-input-number
+                  [form_group]="form"
+                  [form_control]="'age'"
+                  label="Age Constraint"
+                  [min]="18"
+                  [max]="99"
+                  [hint]="'Eligible age: 18 - 99'"
+                  [placeholder]="'25'"
+                />
+                
+                <dom-date-picker
+                  [form_group]="form"
+                  [form_control]="'birth_date'"
+                  label="Date of Birth"
+                  placeholder="Select birth date"
+                  format="iso"
+                  [hint]="'Stored format: YYYY-MM-DD'"
+                />
+              </div>
+            </section>
+            
+            <!-- Sub-Section B: 📧 Access Coordinates & Reach -->
+            <section class="space-y-6">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
+                <i class="fa-solid fa-address-card text-indigo-400"></i> 2. Contact Coordinates
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-input
+                  [form_group]="form"
+                  [form_control]="'email'"
+                  [label]="'Email Address'"
+                  [placeholder]="'john@example.com'"
+                  [type]="'email'"
+                />
+
+                <dom-input
+                  [form_group]="form"
+                  [form_control]="'password'"
+                  [label]="'Secure Password'"
+                  [type]="'password'"
+                  [hint]="'Must be at least 8 characters'"
+                />
+
+                <!-- Custom Normalized Mobile Phone component -->
+                <div class="sm:col-span-2">
+                  <dom-mobile-number
+                    [form_group]="form"
+                    [form_control]="'mobile_phone'"
+                    label="Mobile Telephone Number"
+                  />
+                </div>
+
+                <div class="sm:col-span-2">
+                  <dom-datetime-picker
+                    [form_group]="form"
+                    [form_control]="'appointment'"
+                    label="Scheduled Consultation Slot"
+                    placeholder="Choose date &amp; time"
+                    format="iso"
+                    [hint]="'Stored format: YYYY-MM-DD HH:mm'"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <!-- Sub-Section C: ⚙️ Custom Settings & Preferences -->
+            <section class="space-y-6">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
+                <i class="fa-solid fa-sliders text-indigo-400"></i> 3. Preferences &amp; Config Options
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-input-number
+                  [form_group]="form"
+                  [form_control]="'price'"
+                  label="Budget Allocation"
+                  mode="decimal"
+                  [min]="0"
+                  [decimal_places]="2"
+                  placeholder="0.00"
+                />
+
+                <div class="flex flex-col gap-1 w-full">
+                  <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 select-none">Account State</label>
+                  <div class="h-[30px] flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md px-3 shadow-sm w-full">
+                    <dom-toggle
+                      [form_group]="form"
+                      [form_control]="'active'"
+                      label=""
+                      on_label="Active State"
+                      off_label="Inactive State"
+                    />
+                  </div>
+                </div>
+
+                <dom-single-select
+                  [form_group]="form"
+                  [form_control]="'country'"
+                  label="Country of Residence"
+                  [options]="countryOptions()"
+                  [id_property]="'code'"
+                  [title_property]="'title'"
+                  (on_change)="onCountryChange($event)"
+                />
+
+                <dom-multi-select
+                  [form_group]="form"
+                  [form_control]="'language'"
+                  [label]="'Preferred Languages'"
+                  [options]="languageOptions"
+                  [id_property]="'code'"
+                  [title_property]="'name'"
+                  (on_change)="onLanguageChange($event)"
+                />
+
+                <div class="sm:col-span-2">
+                  <dom-inputarea
+                    [form_group]="form"
+                    [form_control]="'description'"
+                    label="Brief Profile Biography"
+                    placeholder="Describe your profile here..."
+                    [rows]="3"
+                    [max_length]="300"
+                    hint="Biography allows up to 300 characters"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <!-- Sub-Section D: 📐 Layout Orientations & Form Choices -->
+            <section class="space-y-6">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
+                <i class="fa-solid fa-list-check text-indigo-400"></i> 4. Layout Radios &amp; Checkboxes
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-radio
+                  [form_group]="form"
+                  [form_control]="'gender'"
+                  label="Gender Category"
+                  [layout]="layout()"
+                  [options]="genderOptions"
+                />
+                
+                <dom-checkbox
+                  [form_group]="form"
+                  [form_control]="'notifications'"
+                  label="Alert Notifications Subscriptions"
+                  [layout]="layout()"
+                  [options]="notificationOptions"
+                />
+              </div>
+            </section>
+
+            <!-- Safety & Agreements -->
+            <section class="space-y-4">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
+                <i class="fa-solid fa-shield-halved text-indigo-400"></i> 5. Agreements &amp; Terms
+              </h4>
+              <dom-checkbox
+                [form_group]="form"
+                [form_control]="'agree'"
+                label="I explicitly accept all Terms of Services and Safety Policies."
+              />
+            </section>
+
+            <!-- Submission Actions -->
+            <div class="flex gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-indigo-700 active:bg-indigo-800 shadow-md hover:shadow-lg transition cursor-pointer"
+                (click)="submit()"
+              >
+                <i class="fa-solid fa-paper-plane"></i> Submit Form Schema
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 dark:active:bg-slate-800 transition cursor-pointer"
+                (click)="reset()"
+              >
+                <i class="fa-solid fa-rotate-left"></i> Reset Form
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: STICKY LIVE STATE MONITOR -->
+      <div class="w-full xl:w-80 shrink-0">
+        <div class="sticky top-6 bg-white dark:bg-slate-900 rounded-md shadow-sm border border-slate-200/80 dark:border-slate-800/80 overflow-hidden transition-colors duration-300">
+          <div class="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-code text-indigo-400"></i> Live Form State
+            </span>
+            <span
+              class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
+              [class.bg-emerald-50]="form.valid"
+              [class.text-emerald-700]="form.valid"
+              [class.dark:bg-emerald-950/40]="form.valid"
+              [class.dark:text-emerald-400]="form.valid"
+              [class.bg-rose-50]="!form.valid"
+              [class.text-rose-600]="!form.valid"
+              [class.dark:bg-rose-950/40]="!form.valid"
+              [class.dark:text-rose-400]="!form.valid"
+            >
+              <i class="fa-solid" [class.fa-circle-check]="form.valid" [class.fa-circle-xmark]="!form.valid"></i>
+              {{ form.valid ? 'VALID' : 'INVALID' }}
+            </span>
+          </div>
+          <pre class="text-[10px] font-mono text-slate-600 dark:text-slate-300 p-4 overflow-auto max-h-[75vh] leading-relaxed bg-slate-50/30 dark:bg-slate-950/30">{{ form.value | json }}</pre>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── TAB CONTENT 2: OVERLAYS & MEDIA ── -->
+  @if (active_tab() === 'overlays') {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Card A: Slide Drawers & Modal Triggers -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md p-6 shadow-sm flex flex-col justify-between space-y-6">
+        <div class="space-y-1">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-window-restore text-indigo-500"></i>
+            Slide Sheets &amp; Modals Console
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Launch overlays and custom dialog boxes with built-in accessibility focus traps.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Drawer triggers -->
+          <div class="space-y-2">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Drawer Slide Anchors</span>
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" (click)="openDrawer('left')" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">Left</button>
+              <button type="button" (click)="openDrawer('right')" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">Right</button>
+              <button type="button" (click)="openDrawer('top')" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">Top</button>
+              <button type="button" (click)="openDrawer('bottom')" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">Bottom</button>
+            </div>
+          </div>
+
+          <!-- Dialog triggers -->
+          <div class="space-y-2">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Modal Focus Sizes</span>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" (click)="openDialog('sm')" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">SM</button>
+              <button type="button" (click)="openDialog('md')" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">MD</button>
+              <button type="button" (click)="openDialog('lg')" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">LG</button>
+              <button type="button" (click)="openDialog('xl')" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-650 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-750 transition cursor-pointer">XL</button>
+              <button type="button" (click)="openDialog('full')" class="px-3 py-2 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 border border-indigo-200 dark:border-indigo-900/50 text-xs font-bold rounded-md transition cursor-pointer">Full Screen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card B: Autoplay Carousel -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md p-6 shadow-sm flex flex-col justify-between space-y-6">
+        <div class="space-y-1">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-images text-emerald-500"></i>
+            Hardware Accelerated Carousel
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Automated CSS sliding transitions supporting projected custom slots.
+          </p>
+        </div>
+
+        <div class="relative rounded-md overflow-hidden shadow-sm h-40 border border-slate-200/50 dark:border-slate-800/50">
+          <dom-carousel [items]="carousel_slides" [autoplay]="true" [interval]="3500">
+            <ng-template #slideTemplate let-slide>
+              <div class="w-full h-full bg-gradient-to-br {{ slide.bg }} flex flex-col justify-center px-8 text-white select-none">
+                <h4 class="font-extrabold text-base tracking-tight leading-tight">{{ slide.title }}</h4>
+                <p class="text-[11px] text-white/80 mt-1.5 leading-snug">{{ slide.desc }}</p>
+              </div>
+            </ng-template>
+          </dom-carousel>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- ── TAB CONTENT 3: MICRO-UTILITIES ── -->
+  @if (active_tab() === 'utilities') {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Card A: Stackable Toast Controls -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md p-6 shadow-sm space-y-6">
+        <div class="space-y-1">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-bell text-amber-500"></i>
+            Stackable Action Toasts
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Fire stackable alert notifications featuring custom action callbacks.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" (click)="triggerToast('success')" class="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-900/50 text-xs font-bold rounded-md transition cursor-pointer flex items-center justify-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Success</button>
+          <button type="button" (click)="triggerToast('error')" class="px-3 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 hover:bg-rose-100 border border-rose-200 dark:border-rose-900/50 text-xs font-bold rounded-md transition cursor-pointer flex items-center justify-center gap-1.5"><i class="fa-solid fa-circle-xmark"></i> Error (Retry)</button>
+          <button type="button" (click)="triggerToast('warning')" class="px-3 py-2 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 hover:bg-amber-100 border border-amber-200 dark:border-amber-900/50 text-xs font-bold rounded-md transition cursor-pointer flex items-center justify-center gap-1.5"><i class="fa-solid fa-circle-exclamation"></i> Warn (Undo)</button>
+          <button type="button" (click)="triggerToast('info')" class="px-3 py-2 bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 hover:bg-sky-100 border border-sky-200 dark:border-sky-900/50 text-xs font-bold rounded-md transition cursor-pointer flex items-center justify-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Info</button>
+        </div>
+      </div>
+
+      <!-- Card B: Shimmer Skeletons Sandbox -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md p-6 shadow-sm space-y-6">
+        <div class="space-y-1">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-palette text-indigo-500"></i>
+            Shimmer Loading Sandbox
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Test custom shimmering animations layered over content nodes.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/80 rounded-md p-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Shimmer Control</span>
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" [checked]="profile_loading()" (change)="profile_loading.set(!profile_loading())" class="sr-only peer" />
+              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 transition-colors duration-250"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-3 relative min-h-[48px]">
+            <div class="w-11 h-11 rounded-full overflow-hidden shrink-0 border border-slate-200 dark:border-slate-750 flex items-center justify-center bg-indigo-50 dark:bg-indigo-950"
+                 [domSkeleton]="profile_loading()">
+              <i class="fa-solid fa-user-tie text-md text-indigo-500 dark:text-indigo-400"></i>
+            </div>
+            <div class="flex-1 min-w-0 space-y-1">
+              <div class="h-4 bg-slate-800 rounded-md font-bold text-xs text-slate-800 dark:text-slate-100"
+                   [domSkeleton]="profile_loading()"
+                   style="width: 75%">
+                Alex Mercer
+              </div>
+              <div class="h-3 bg-slate-800 rounded-md text-[10px] text-slate-400"
+                   [domSkeleton]="profile_loading()"
+                   style="width: 45%">
+                Lead Architect
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card C: Hover Directional Tooltips -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-md p-6 shadow-sm space-y-6">
+        <div class="space-y-1">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-comment-dots text-sky-500"></i>
+            Directional Tooltips
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Hover over these nodes to test real-time tooltips positioned in all directions.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-center">
+          <button type="button" domTooltip="Tooltip shown on Top position!" domTooltipPosition="top" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-750 rounded-md text-xs font-semibold transition cursor-pointer">Top</button>
+          <button type="button" domTooltip="Tooltip shown on Right position!" domTooltipPosition="right" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-750 rounded-md text-xs font-semibold transition cursor-pointer">Right</button>
+          <button type="button" domTooltip="Tooltip shown on Bottom position!" domTooltipPosition="bottom" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-750 rounded-md text-xs font-semibold transition cursor-pointer">Bottom</button>
+          <button type="button" domTooltip="Tooltip shown on Left position!" domTooltipPosition="left" class="px-2 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-750 rounded-md text-xs font-semibold transition cursor-pointer">Left</button>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</div>
+
+<!-- ── STANDALONE DRAWER COMPONENT ── -->
+<dom-drawer [is_open]="drawer_open()"
+            [position]="drawer_position()"
+            [header_template]="drawerHeader"
+            (on_close)="drawer_open.set(false)">
+  <ng-template #drawerHeader>
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-window-maximize text-indigo-500"></i>
+      <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">Drawer Sliding Sheet</span>
+    </div>
+  </ng-template>
+
+  <div class="space-y-6">
+    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+      This is a fully customizable standalone slide drawer. It slides gracefully from the <strong>{{ drawer_position() }}</strong> side, features responsive touch boundaries, and traps focus natively.
+    </p>
+    <div class="p-4 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/50 dark:border-indigo-900/30 rounded-md space-y-1">
+      <h5 class="text-xs font-bold text-indigo-600 dark:text-indigo-400">Position Configuration</h5>
+      <p class="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">Current sheet is mapped to coordinates matching standard screen bounds.</p>
+    </div>
+  </div>
+
+  <div drawer-footer class="flex items-center gap-3 w-full">
+    <button type="button" (click)="drawer_open.set(false)" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-bold shadow-md transition cursor-pointer">
+      Confirm Action
+    </button>
+    <button type="button" (click)="drawer_open.set(false)" class="w-full py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold rounded-md transition cursor-pointer">
+      Dismiss Sheet
+    </button>
+  </div>
+</dom-drawer>
+
+<!-- ── STANDALONE DIALOG MODAL COMPONENT ── -->
+<dom-dialog [is_open]="dialog_open()"
+            [size]="dialog_size()"
+            [title]="'Focus-Trapped Zoom Dialog'"
+            (on_close)="dialog_open.set(false)">
+  <div class="space-y-4">
+    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+      You are previewing a dialog modal configured to size size <strong>{{ dialog_size() }}</strong>.
+    </p>
+    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+      It features an overlay backdrop blur, captures keyboard tabs, automatically focuses on first inputs, and prevents background view scrolling.
+    </p>
+  </div>
+
+  <div dialog-footer class="flex items-center gap-3">
+    <button type="button" (click)="dialog_open.set(false)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-750 text-white rounded-md text-xs font-bold shadow-md transition ml-auto cursor-pointer">
+      Confirm Choice
+    </button>
+    <button type="button" (click)="dialog_open.set(false)" class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md text-xs font-bold transition cursor-pointer">
+      Close Window
+    </button>
+  </div>
+</dom-dialog>

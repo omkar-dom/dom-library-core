@@ -1,0 +1,36 @@
+<div class="flex flex-col gap-1 relative w-full">
+  @if (label()) {
+    <label class="text-xs font-medium text-slate-600 mb-1 select-none"
+      >{{ label() }}
+      @if (is_required()) {
+        <span class="text-rose-500 text-xs ml-0.5">*</span>
+      }
+    </label>
+  }
+
+  <div [class]="layout() === 'horizontal' ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2'">
+    @for (opt of options(); track opt.value) {
+      <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+        <input
+          type="radio"
+          [formControl]="control()"
+          [value]="opt.value"
+          [disabled]="opt.disabled ?? false"
+          class="border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          (blur)="on_blur.emit(control().value)"
+        />
+        <span class="text-sm text-slate-700" [class.text-slate-400]="opt.disabled">
+          {{ opt.label }}
+        </span>
+      </label>
+    }
+  </div>
+
+  @if (hint()) {
+    <p class="text-[11px] text-slate-400 mt-0.5 select-none">{{ hint() }}</p>
+  }
+
+  @if (control().invalid && control().touched) {
+    <dom-error class="mt-1" [control]="control()"/>
+  }
+</div>

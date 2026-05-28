@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-1 relative w-full">
+  @if (label()) {
+    <label class="text-xs font-medium text-slate-600 mb-1 select-none">
+      {{ label() }}
+      @if (is_required()) {
+        <span class="text-rose-500 text-xs ml-0.5">*</span>
+      }
+    </label>
+  }
+
+  <div class="relative flex flex-col">
+    <input
+      type="date"
+      [value]="htmlInputValue()"
+      [placeholder]="placeholder()"
+      [disabled]="is_disabled()"
+      [readonly]="is_readonly()"
+      [min]="htmlMinDate() ?? ''"
+      [max]="htmlMaxDate() ?? ''"
+      (input)="onHtmlInputChange($event)"
+      (blur)="on_blur.emit(control().value)"
+      class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 h-[30px]"
+    />
+
+    @if (hint()) {
+      <p class="text-[11px] text-slate-400 mt-1 select-none">{{ hint() }}</p>
+    }
+
+    @if (control().invalid && control().touched) {
+      <dom-error class="mt-1" [control]="control()" />
+    }
+  </div>
+</div>

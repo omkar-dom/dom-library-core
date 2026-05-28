@@ -1,0 +1,162 @@
+<div class="space-y-8 max-w-5xl mx-auto px-4 py-6">
+  <!-- Header Title -->
+  <div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+      <i class="fa-solid fa-square-check text-indigo-500"></i>
+      Select Button Component
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-2 text-lg">
+      {{ component_meta.tag_line }}
+    </p>
+  </div>
+
+  <!-- Segmented Showcase Tabs -->
+  <div class="flex border-b border-slate-100 dark:border-slate-800 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button"
+              (click)="active_tab.set(tab.value)"
+              class="pb-3 text-sm font-semibold transition-colors duration-200 border-b-2 cursor-pointer"
+              [ngClass]="{
+                'border-indigo-500 text-indigo-600 dark:text-indigo-400': active_tab() === tab.value,
+                'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300': active_tab() !== tab.value
+              }">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Contents -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-8">
+      
+      <!-- Overview Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Overview</h2>
+        <div class="space-y-3">
+          @for (p of component_meta.purpose; track p) {
+            <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed">{{ p }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Live Interactive Showcase Form -->
+      <div class="bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800 space-y-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Live Interactive Form Demo</h2>
+        
+        <form [formGroup]="form" class="space-y-6 max-w-lg">
+          <!-- Single Choice Select Button -->
+          <dom-select-button
+            [form_group]="form"
+            form_control="speed"
+            [options]="speed_options"
+            label="Single Selection — Speed Option"
+            hint="Displays a check icon. Allows selecting exactly one choice."
+          />
+
+          <!-- Multi-choice Select Button -->
+          <dom-select-button
+            [form_group]="form"
+            form_control="devices"
+            [options]="device_options"
+            [multiple]="true"
+            label="Multi Selection — Target Devices"
+            hint="Supports holding down multiple selection arrays. Tablet choice is marked as disabled."
+          />
+
+          <!-- Actions -->
+          <div class="flex items-center gap-3 pt-2">
+            <button type="button" (click)="submit()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer">
+              Submit Form
+            </button>
+            <button type="button" (click)="reset()" class="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md font-semibold shadow-sm transition duration-200 cursor-pointer">
+              Reset Form
+            </button>
+          </div>
+        </form>
+
+        <!-- Current Form Value Live Display -->
+        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700/50">
+          <h4 class="text-xs uppercase text-slate-400 font-bold tracking-wider mb-2">Form Values Signal Debug</h4>
+          <pre class="text-xs font-mono text-slate-600 dark:text-slate-300"><code>{{ form.value | json }}</code></pre>
+        </div>
+      </div>
+
+      <!-- Code Snippets -->
+      <div class="bg-slate-900 dark:bg-slate-950 rounded-md p-6 text-slate-100 space-y-6">
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Import Module</h3>
+          <pre class="overflow-x-auto text-sm text-indigo-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.import }}</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Single Selection Code</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.single }}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2">Multi Selection Code</h3>
+          <pre class="overflow-x-auto text-sm text-emerald-300 font-mono bg-slate-950/50 p-4 rounded-md"><code>{{ snippets.multi }}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (active_tab() === 'api') {
+    <div class="space-y-8 bg-white dark:bg-slate-900 rounded-md p-6 border border-slate-100 dark:border-slate-800">
+      
+      <!-- Inputs Table -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Inputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Type</th>
+                <th class="py-3 px-2">Default</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ inp.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ inp.type }}</td>
+                  <td class="py-3 px-2 font-mono text-slate-400">{{ inp.default_val }}</td>
+                  <td class="py-3 px-2">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Outputs Table -->
+      <div class="pt-6">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">API Outputs</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-400 uppercase font-semibold">
+                <th class="py-3 px-2">Name</th>
+                <th class="py-3 px-2">Payload</th>
+                <th class="py-3 px-2">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (out of api_outputs; track out.name) {
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 text-slate-600 dark:text-slate-300">
+                  <td class="py-3 px-2 font-mono text-indigo-500">{{ out.name }}</td>
+                  <td class="py-3 px-2 font-mono text-sky-500">{{ out.payload }}</td>
+                  <td class="py-3 px-2">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

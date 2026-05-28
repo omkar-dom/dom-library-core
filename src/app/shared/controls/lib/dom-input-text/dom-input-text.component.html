@@ -1,0 +1,48 @@
+<div class="flex flex-col gap-1 relative">
+  @if (label()) {
+    <label class="text-xs font-medium text-slate-600 mb-1"
+      >{{ label() }}
+      @if (is_required()) {
+        <span class="text-rose-500 text-xs ml-0.5">*</span>
+      }
+    </label>
+  }
+
+  <div class="relative flex flex-col">
+    <div class="relative flex items-center w-full">
+      <input
+        [type]="type() === 'password' ? (show_pass() ? 'text' : 'password') : type()"
+        [placeholder]="placeholder()"
+        [formControl]="control()"
+        [attr.maxlength]="max_length() ?? null"
+        [readonly]="is_readonly()"
+        (blur)="on_blur.emit(control().value)"
+        class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 pr-8"
+      />
+
+      <!-- Password visibility toggle -->
+      @if (type() === 'password' && show_password_toggle()) {
+        <button
+          type="button"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center p-0.5 rounded focus:outline-none"
+          [attr.aria-label]="show_pass() ? 'Hide password' : 'Show password'"
+          [title]="show_pass() ? 'Hide password' : 'Show password'"
+          (click)="show_pass.update((v) => !v)"
+        >
+          <i class="fa-solid text-[13px]" [class.fa-eye]="!show_pass()" [class.fa-eye-slash]="show_pass()"></i>
+        </button>
+      }
+    </div>
+
+    <!-- Hint -->
+    @if (hint() || type() === 'email') {
+      <p class="text-[11px] text-slate-400 mt-1 select-none">
+        {{ type() === 'email' ? 'example@domain.com' : hint() }}
+      </p>
+    }
+
+    @if (control().invalid && control().touched) {
+      <dom-error class="mt-1" [control]="control()" />
+    }
+  </div>
+</div>

@@ -1,0 +1,313 @@
+<div class="w-full py-6 px-4 space-y-6">
+
+  <!-- Page header -->
+  <div class="flex items-center gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">{{ component_meta.name }}</h1>
+  </div>
+  <p class="text-gray-500 text-sm -mt-2">Reactive boolean on/off switch with accessible role="switch", custom labels, and built-in validation.</p>
+
+  <!-- Tab bar -->
+  <div class="flex border-b border-gray-200 gap-6">
+    @for (tab of tabs; track tab.value) {
+      <button type="button" class="pb-2 text-sm font-medium transition-colors"
+        [class.border-b-2]="active_tab() === tab.value"
+        [class.border-blue-600]="active_tab() === tab.value"
+        [class.text-blue-600]="active_tab() === tab.value"
+        [class.text-gray-500]="active_tab() !== tab.value"
+        (click)="active_tab.set(tab.value)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ═══ COMPONENT TAB ═══ -->
+  @if (active_tab() === 'component') {
+    <div class="space-y-10">
+
+      <section id="section-name">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Name</h2>
+        <div class="flex items-center gap-3">
+          <span class="bg-indigo-50 text-indigo-800 text-base font-mono font-semibold px-3 py-1.5 rounded-md border border-indigo-200">{{ component_meta.name }}</span>
+          <span class="text-gray-400 text-xs">{{ component_meta.tag_line }}</span>
+        </div>
+      </section>
+
+      <section id="section-import">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Import</h2>
+        <pre class="bg-gray-900 text-green-300 text-xs rounded p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.import }}</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Add <code class="bg-gray-100 px-1 rounded">DomToggleComponent</code> to your component's <code class="bg-gray-100 px-1 rounded">imports</code> array. No module required.</p>
+      </section>
+
+      <section id="section-selector">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Selector</h2>
+        <code class="w-full bg-gray-900 text-yellow-300 text-sm font-mono px-4 py-2 rounded inline-block">{{ component_meta.selector }}</code>
+      </section>
+
+      <section id="section-purpose">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Purpose</h2>
+        <div class="bg-white border border-gray-200 rounded-md p-4 text-sm text-gray-700 space-y-2">
+          @for (p of component_meta.purpose; track $index) { <p>{{ p }}</p> }
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400">Usage</h2>
+
+        <!-- Simple -->
+        <div id="usage-simple" class="border border-gray-200 rounded-md overflow-hidden">
+          <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-600">{{ variants.simple.label }}</span>
+            <code class="text-xs px-2 py-0.5 rounded" [class]="variants.simple.badge_cls">{{ variants.simple.badge }}</code>
+          </div>
+          <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div class="pt-1 space-y-3">
+              <dom-toggle
+                [form_group]="simple_form"
+                form_control="notifications"
+                label="Email notifications"
+              />
+              <p class="text-xs text-gray-400">
+                Value: <code class="bg-gray-100 px-1 rounded font-mono">{{ simple_form.get('notifications')?.value }}</code>
+              </p>
+            </div>
+            <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.simple }}</code></pre>
+          </div>
+          <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.simple.footer }}</p></div>
+        </div>
+
+        <div class="space-y-6">
+          <h3 class="text-sm font-semibold text-gray-700">Variants</h3>
+
+          <!-- Required -->
+          <div id="usage-required" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.required.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.required.badge_cls">{{ variants.required.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1 space-y-3">
+                <dom-toggle
+                  [form_group]="variants_form"
+                  form_control="required_field"
+                  label="Accept terms (required)"
+                />
+                <p class="text-xs text-gray-400">
+                  Value: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('required_field')?.value }}</code>
+                  &nbsp;·&nbsp; Valid: <code class="bg-gray-100 px-1 rounded font-mono">{{ variants_form.get('required_field')?.valid }}</code>
+                </p>
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.required }}</code></pre>
+            </div>
+            <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.required.footer }}</p></div>
+          </div>
+
+          <!-- Custom labels -->
+          <div id="usage-labels" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.labels.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.labels.badge_cls">{{ variants.labels.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-toggle
+                  [form_group]="variants_form"
+                  form_control="custom_label_field"
+                  label="Dark mode"
+                  on_label="Enabled"
+                  off_label="Disabled"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.labels }}</code></pre>
+            </div>
+            <div class="px-4 pb-3"><p class="text-xs text-gray-400">{{ variants.labels.footer }}</p></div>
+          </div>
+
+          <!-- Disabled -->
+          <div id="usage-disabled" class="border border-gray-200 rounded-md overflow-hidden">
+            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-xs font-semibold text-gray-600">{{ variants.disabled.label }}</span>
+              <code class="text-xs px-2 py-0.5 rounded" [class]="variants.disabled.badge_cls">{{ variants.disabled.badge }}</code>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+              <div class="pt-1">
+                <dom-toggle
+                  [form_group]="variants_form"
+                  form_control="disabled_field"
+                  label="Feature flag (disabled)"
+                  [is_disabled]="true"
+                />
+              </div>
+              <pre class="bg-gray-900 text-gray-100 text-xs rounded-md p-3 overflow-x-auto leading-relaxed self-start"><code>{{ snippets.disabled }}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-errors">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Possible validation errors</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Validator key</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/3">Message shown</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">How to trigger</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (err of possible_errors; track err.validator) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono">{{ err.validator }}</code></td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ err.message }}</td>
+                  <td class="px-4 py-2.5 text-gray-400 text-[10px]">{{ err.example }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ API TAB ═══ -->
+  @if (active_tab() === 'api') {
+    <div class="space-y-10">
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Inputs</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Input</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/4">Type</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Default</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (inp of api_inputs; track inp.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5">
+                    <code class="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded font-mono">{{ inp.name }}</code>
+                    @if (inp.default_val === 'required') { <span class="ml-1 text-red-500 font-bold text-[10px]">required</span> }
+                  </td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ inp.type }}</td>
+                  <td class="px-4 py-2.5 text-gray-500 font-mono">{{ inp.default_val }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ inp.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Outputs</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/5">Output</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold w-1/6">Payload</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (out of api_outputs; track out.name) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-2.5"><code class="bg-green-50 text-green-800 px-1.5 py-0.5 rounded font-mono">{{ out.name }}</code></td>
+                  <td class="px-4 py-2.5 font-mono text-purple-700">{{ out.payload }}</td>
+                  <td class="px-4 py-2.5 text-gray-700">{{ out.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <pre class="mt-3 bg-gray-900 text-gray-100 text-xs rounded-md p-4 overflow-x-auto leading-relaxed"><code>{{ snippets.outputs }}</code></pre>
+      </section>
+
+      <section>
+        <h2 class="text-sm font-semibold text-gray-800 mb-1">Internal mechanics</h2>
+        <div class="space-y-3">
+          @for (note of internal_notes; track note.name) {
+            <div class="border border-gray-200 rounded-md p-4 flex gap-4">
+              <div class="flex-shrink-0 w-52">
+                <code class="text-xs font-mono text-gray-800 font-semibold">{{ note.name }}</code>
+                <p class="text-[10px] text-gray-400 mt-0.5 font-mono">{{ note.kind }}</p>
+              </div>
+              <p class="text-xs text-gray-600">{{ note.description }}</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ═══ VISUAL FLOW TAB ═══ -->
+  @if (active_tab() === 'visual-flow') {
+    <div class="space-y-8">
+      <p class="text-sm text-gray-500">How <strong>DomToggleComponent</strong> updates the form and emits events on each click.</p>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Click interaction flow</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <div class="text-2xl mb-2">1</div>
+            <p class="font-semibold text-blue-800">User clicks</p>
+            <p class="text-blue-600 mt-1">Button (click) fires; setValue(!value) flips the boolean</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-amber-50 border border-amber-200 rounded-md p-3">
+            <div class="text-2xl mb-2">2</div>
+            <p class="font-semibold text-amber-800">markAsTouched</p>
+            <p class="text-amber-600 mt-1">control().markAsTouched() makes validation errors eligible to show</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-indigo-50 border border-indigo-200 rounded-md p-3">
+            <div class="text-2xl mb-2">3</div>
+            <p class="font-semibold text-indigo-800">valueChanges</p>
+            <p class="text-indigo-600 mt-1">on_change emits the new boolean via the valueChanges subscription</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-300 text-2xl hidden md:flex">→</div>
+          <div class="bg-green-50 border border-green-200 rounded-md p-3">
+            <div class="text-2xl mb-2">4</div>
+            <p class="font-semibold text-green-800">UI updates</p>
+            <p class="text-green-600 mt-1">translate-x-5 / translate-x-0 animates the knob; aria-checked reflects new state</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Value / validator guide</h2>
+        <div class="border border-gray-200 rounded-md overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Control value</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Visual state</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Passes required?</th>
+                <th class="text-left px-4 py-2.5 text-gray-500 font-semibold">Passes requiredTrue?</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2.5 font-mono text-blue-700">true</td>
+                <td class="px-4 py-2.5 text-green-600 font-semibold">On (blue)</td>
+                <td class="px-4 py-2.5 text-green-600">yes</td>
+                <td class="px-4 py-2.5 text-green-600">yes</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2.5 font-mono text-blue-700">false</td>
+                <td class="px-4 py-2.5 text-gray-500">Off (gray)</td>
+                <td class="px-4 py-2.5 text-red-500">no (falsy)</td>
+                <td class="px-4 py-2.5 text-red-500">no</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="px-4 py-2 text-[10px] text-gray-400 border-t border-gray-100">Always use Validators.requiredTrue for toggles that must be switched on — Validators.required fails on false even though it is a valid boolean.</p>
+        </div>
+      </section>
+    </div>
+  }
+
+</div>

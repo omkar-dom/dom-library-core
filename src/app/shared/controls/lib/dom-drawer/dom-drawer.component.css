@@ -1,0 +1,19 @@
+.drawer-closed-left {
+  transform: translateX(-100%);
+}
+
+.drawer-closed-right {
+  transform: translateX(100%);
+}
+
+.drawer-closed-top {
+  transform: translateY(-100%);
+}
+
+.drawer-closed-bottom {
+  transform: translateY(100%);
+}
+
+.translate-none {
+  transform: translate(0, 0) !important;
+}
