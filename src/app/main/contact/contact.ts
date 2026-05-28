@@ -264,7 +264,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ContactComponent {
   // Replace 'YOUR_FORMSPREE_ID' with your form ID from Formspree.io to link to your inbox.
-  readonly formspreeId = signal<string>('YOUR_FORMSPREE_ID');
+  readonly formspreeId = signal<string>('https://formspree.io/f/mykvlayl');
 
   readonly emailCopied = signal(false);
   readonly phoneCopied = signal(false);
