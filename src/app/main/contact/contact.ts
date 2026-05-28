@@ -93,34 +93,41 @@ import { CommonModule } from '@angular/common';
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="space-y-2">
                   <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Name</label>
-                  <input type="text" placeholder="John Doe" required
+                  <input type="text" name="name" placeholder="John Doe" required
                          class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:border-violet-500 focus:outline-none text-slate-200 placeholder-slate-600 text-sm transition-all">
                 </div>
                 <div class="space-y-2">
                   <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Email</label>
-                  <input type="email" placeholder="john@example.com" required
+                  <input type="email" name="email" placeholder="john@example.com" required
                          class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:border-violet-500 focus:outline-none text-slate-200 placeholder-slate-600 text-sm transition-all">
                 </div>
               </div>
 
               <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Subject</label>
-                <input type="text" placeholder="Project collaboration request" required
+                <input type="text" name="subject" placeholder="Project collaboration request" required
                        class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:border-violet-500 focus:outline-none text-slate-200 placeholder-slate-600 text-sm transition-all">
               </div>
 
               <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Message</label>
-                <textarea placeholder="Tell us about your project or requests..." rows="4" required
+                <textarea name="message" placeholder="Tell us about your project or requests..." rows="4" required
                           class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:border-violet-500 focus:outline-none text-slate-200 placeholder-slate-600 text-sm transition-all resize-none"></textarea>
               </div>
 
+              <!-- Error Alert -->
+              <div *ngIf="error()" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-left animate-fadeIn">
+                <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+                Transmission failed. Ensure your Formspree ID is set correctly in the component.
+              </div>
+
               <!-- Submit button -->
-              <button type="submit" 
-                      class="relative w-full group overflow-hidden flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-650 text-white font-bold text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-violet-900/20 hover:shadow-violet-900/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300">
+              <button type="submit" [disabled]="submitting()"
+                      class="relative w-full group overflow-hidden flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-650 text-white font-bold text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-violet-900/20 hover:shadow-violet-900/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-55 disabled:pointer-events-none transition-all duration-300">
                 <span class="relative z-10 flex items-center gap-2">
-                  {{ submitted() ? 'Message Transmitted!' : 'Transmit Message' }}
-                  <i class="fa-solid" [class.fa-paper-plane]="!submitted()" [class.fa-check-double]="submitted()"></i>
+                  <span *ngIf="submitting()" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  {{ submitted() ? 'Message Transmitted!' : (submitting() ? 'Transmitting...' : 'Transmit Message') }}
+                  <i *ngIf="!submitting()" class="fa-solid" [class.fa-paper-plane]="!submitted()" [class.fa-check-double]="submitted()"></i>
                 </span>
                 <span class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
               </button>
@@ -149,9 +156,14 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ContactComponent {
+  // Replace 'YOUR_FORMSPREE_ID' with your form ID from Formspree.io to link to your inbox.
+  readonly formspreeId = signal<string>('YOUR_FORMSPREE_ID');
+
   readonly emailCopied = signal(false);
   readonly phoneCopied = signal(false);
+  readonly submitting = signal(false);
   readonly submitted = signal(false);
+  readonly error = signal(false);
 
   copyText(text: string, type: 'email' | 'phone') {
     navigator.clipboard.writeText(text).then(() => {
@@ -167,7 +179,41 @@ export class ContactComponent {
 
   handleSubmit(event: Event) {
     event.preventDefault();
-    this.submitted.set(true);
-    setTimeout(() => this.submitted.set(false), 5000);
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    this.submitting.set(true);
+    this.error.set(false);
+
+    // If no Formspree ID is specified, run mock completion for immediate local confirmation
+    if (this.formspreeId() === 'YOUR_FORMSPREE_ID') {
+      setTimeout(() => {
+        this.submitting.set(false);
+        this.submitted.set(true);
+        form.reset();
+        setTimeout(() => this.submitted.set(false), 5000);
+      }, 1000);
+      return;
+    }
+
+    fetch(`https://formspree.io/f/${this.formspreeId()}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(response => {
+      this.submitting.set(false);
+      if (response.ok) {
+        this.submitted.set(true);
+        form.reset();
+        setTimeout(() => this.submitted.set(false), 5000);
+      } else {
+        this.error.set(true);
+      }
+    }).catch(() => {
+      this.submitting.set(false);
+      this.error.set(true);
+    });
   }
 }
