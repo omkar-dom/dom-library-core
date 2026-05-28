@@ -74,11 +74,7 @@ export class Radio {
 
   readonly snippets = {
     import:
-`import { DomRadioComponent } from '@app/shared/controls/lib/dom-radio/dom-radio.component';
-import type { RadioOption } from '@app/shared/controls/lib/dom-radio/dom-radio.component';
-
-// or via the public API barrel:
-import { DomRadioComponent } from '@app/shared/controls/public-api';`,
+`import { DomRadioComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

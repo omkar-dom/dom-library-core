@@ -50,10 +50,7 @@ export class Files {
 
   readonly snippets = {
     import:
-`import { DomFilesComponent } from '@app/shared/controls/lib/dom-files/dom-files.component';
-
-// or via the public API barrel:
-import { DomFilesComponent } from '@app/shared/controls/public-api';`,
+`import { DomFilesComponent } from 'dom-library-core';`,
 
     single:
 `// TypeScript — using form_group + control_name

@@ -53,10 +53,7 @@ export class InputNumber {
 
   readonly snippets = {
     import:
-`import { DomInputNumberComponent } from '@app/shared/controls/lib/dom-input-number/dom-input-number.component';
-
-// or via the public API barrel:
-import { DomInputNumberComponent } from '@app/shared/controls/public-api';`,
+`import { DomInputNumberComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

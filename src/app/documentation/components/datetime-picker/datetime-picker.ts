@@ -50,11 +50,7 @@ export class DateTimePicker {
 
   readonly snippets = {
     import:
-`import { DomDateTimePickerComponent } from '@app/shared/controls/lib/dom-input-date-time/dom-input-date-time';
-import { domDateMin, domDateMax } from '@app/shared/controls/lib/date-format.util';
-
-// or via the public API barrel:
-import { DomDateTimePickerComponent, domDateMin, domDateMax } from '@app/shared/controls/public-api';`,
+`import { DomDateTimePickerComponent, domDateMin, domDateMax } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

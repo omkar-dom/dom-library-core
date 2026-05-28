@@ -48,10 +48,7 @@ export class Toggle {
 
   readonly snippets = {
     import:
-`import { DomToggleComponent } from '@app/shared/controls/lib/dom-input-toggle/dom-input-toggle.component';
-
-// or via the public API barrel:
-import { DomToggleComponent } from '@app/shared/controls/public-api';`,
+`import { DomToggleComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

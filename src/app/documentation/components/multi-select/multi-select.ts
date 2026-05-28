@@ -72,10 +72,7 @@ export class MultiSelect {
 
   readonly snippets = {
     import:
-`import { DomMultiSelectComponent } from '@app/shared/controls/lib/dom-input-multi-select/dom-input-multi-select';
-
-// or via the public API barrel:
-import { DomMultiSelectComponent } from '@app/shared/controls/public-api';`,
+`import { DomMultiSelectComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

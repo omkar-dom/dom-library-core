@@ -71,10 +71,7 @@ export class SingleSelect {
 
   readonly snippets = {
     import:
-`import { DomSingleSelectComponent } from '@app/shared/controls/lib/dom-single-select/dom-input-single-select';
-
-// or via the public API barrel:
-import { DomSingleSelectComponent } from '@app/shared/controls/public-api';`,
+`import { DomSingleSelectComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

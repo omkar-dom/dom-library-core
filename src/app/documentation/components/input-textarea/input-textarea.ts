@@ -52,10 +52,7 @@ export class InputTextarea {
 
   readonly snippets = {
     import:
-`import { DomTextareaComponent } from '@app/shared/controls/lib/dom-input-textarea/dom-input-textarea.component';
-
-// or via the public API barrel:
-import { DomTextareaComponent } from '@app/shared/controls/public-api';`,
+`import { DomTextareaComponent } from 'dom-library-core';`,
 
     simple:
 `// TypeScript

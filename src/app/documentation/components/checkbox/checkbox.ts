@@ -71,11 +71,7 @@ export class Checkbox {
 
   readonly snippets = {
     import:
-`import { DomCheckboxComponent } from '@app/shared/controls/lib/dom-input-checkbox/dom-input-checkbox.component';
-import type { CheckboxOption } from '@app/shared/controls/lib/dom-input-checkbox/dom-input-checkbox.component';
-
-// or via the public API barrel:
-import { DomCheckboxComponent } from '@app/shared/controls/public-api';`,
+`import { DomCheckboxComponent } from 'dom-library-core';`,
 
     single:
 `// TypeScript

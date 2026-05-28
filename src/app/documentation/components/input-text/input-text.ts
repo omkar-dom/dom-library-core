@@ -51,10 +51,7 @@ export class InputText {
   // ─── Code snippets ──────────────────────────────────────────────────────────
 
   readonly snippets = {
-    import: `import { DomInputComponent } from '@app/shared/controls/lib/dom-input-text/dom-input-text.component';
-
-// or via the public API barrel:
-import { DomInputComponent } from '@app/shared/controls/public-api';`,
+    import: `import { DomInputComponent } from 'dom-library-core';`,
 
     simple: `// TypeScript
 this.simple_form = this.fb.group({
