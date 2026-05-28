@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <section
-      class="relative h-[95vh] bg-slate-950 py-24 flex items-center justify-center overflow-hidden antialiased"
+      class="relative h-[95vh] bg-slate-950 py-24 flex items-center justify-center overflow-y-auto antialiased"
     >
       <!-- Ambient background grid and glowing neon orbs -->
       <div
