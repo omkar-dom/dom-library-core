@@ -1,8 +1,10 @@
-<app-navbar></app-navbar>
-<div class="pb-1 pt-20 overflow-auto">
+<div class="relative">
+  <app-navbar></app-navbar>
+</div>
+<div class="pb-1 pt-20 min-h-[95vh] max-h-[95vh] overflow-hidden">
   <router-outlet></router-outlet>
 </div>
 
-<footer class="sticky bottom-0 text-center text-xs py-1 bg-gray-50 text-gray-500">
+<footer class="sticky bottom-0 z-1000 text-center text-xs py-1 bg-gray-50 text-gray-500">
   <p>dom-library-core - dandavateomkar@gmail.com - 2026</p>
 </footer>
