@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { isDevMode } from '@angular/core';
 import { Main } from './main/main';
 import { Counter } from './main/counter/counter';
 import { Home } from './main/home/home';
@@ -141,5 +142,17 @@ export const routes: Routes = [
       },
     ],
   },
- 
 ];
+
+// Conditionally append local developer routes
+if (isDevMode()) {
+  const mainRoute = routes.find((r) => r.component === Main);
+  if (mainRoute && mainRoute.children) {
+    mainRoute.children.push({
+      path: 'dev-deploy-steps',
+      loadComponent: () =>
+        import('./documentation/components/deploy-steps/deploy-steps').then((m) => m.DeployStepsComponent),
+    });
+  }
+}
+
