@@ -1,15 +1,17 @@
-<div class="w-full pt-6 px-4 space-y-6">
-
+<div class="w-full mt-6 px-4 space-y-6">
   <!-- Page Header -->
   <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
     <div class="flex items-center gap-3">
-      <h1 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
+      <h1
+        class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2"
+      >
         <i class="fa-solid fa-rocket text-indigo-600 dark:text-indigo-500"></i>
         Publishing &amp; Installation Guide
       </h1>
     </div>
     <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">
-      Learn how to compile, pack, and publish the zero-dependency library to NPM registries, and install it inside your workspace.
+      Learn how to compile, pack, and publish the zero-dependency library to NPM registries, and
+      install it inside your workspace.
     </p>
   </div>
 
@@ -36,64 +38,94 @@
   </div>
 
   <!-- ═══════════════════════════════════════════ HOW TO PUBLISH TAB ═══ -->
-  @if (active_tab() === 'publish') {
+  @if (active_tab() === 'publish' && is_dev_mode()) {
     <div class="space-y-8 max-w-4xl">
-      
       <!-- Step 1: Pack the Library -->
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <span class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs">1</span>
-          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Compile &amp; Bundle the Core Package</h3>
+          <span
+            class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs"
+            >1</span
+          >
+          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            Compile &amp; Bundle the Core Package
+          </h3>
         </div>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-          The shared components are managed inside a dedicated sub-library config named <strong>dom-library-core</strong> which utilizes <code>ng-packagr</code> to create an enterprise-grade distribution bundle suitable for public NPM or private enterprise package registries.
+          The shared components are managed inside a dedicated sub-library config named
+          <strong>dom-library-core</strong> which utilizes <code>ng-packagr</code> to create an
+          enterprise-grade distribution bundle suitable for public NPM or private enterprise package
+          registries.
         </p>
         <div class="pl-8">
-          <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.pack }}</code></pre>
+          <pre
+            class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+          ><code>{{ snippets.pack }}</code></pre>
         </div>
       </section>
 
       <!-- Step 2: Log into NPM Registry -->
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <span class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs">2</span>
-          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Authenticate with NPM</h3>
+          <span
+            class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs"
+            >2</span
+          >
+          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            Authenticate with NPM
+          </h3>
         </div>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-          Before uploading packages, ensure you are logged into your npm account (or your local private repository, such as Artifactory or Verdaccio).
+          Before uploading packages, ensure you are logged into your npm account (or your local
+          private repository, such as Artifactory or Verdaccio).
         </p>
         <div class="pl-8">
-          <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.npm_login }}</code></pre>
+          <pre
+            class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+          ><code>{{ snippets.npm_login }}</code></pre>
         </div>
       </section>
 
       <!-- Step 3: Publish to Registry -->
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <span class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs">3</span>
-          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Publish Output to Registry</h3>
+          <span
+            class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 font-bold flex items-center justify-center text-xs"
+            >3</span
+          >
+          <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            Publish Output to Registry
+          </h3>
         </div>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-          Navigate into the compiled folder (defined inside <code>angular.json</code> output path) and upload the packed library with public visibility.
+          Navigate into the compiled folder (defined inside <code>angular.json</code> output path)
+          and upload the packed library with public visibility.
         </p>
         <div class="pl-8">
-          <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.npm_publish }}</code></pre>
-          <div class="mt-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-250 dark:border-amber-900/50 rounded-md p-3.5 flex gap-2.5">
-            <i class="fa-solid fa-circle-exclamation text-amber-600 dark:text-amber-500 text-xs mt-0.5"></i>
+          <pre
+            class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+          ><code>{{ snippets.npm_publish }}</code></pre>
+          <div
+            class="mt-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-250 dark:border-amber-900/50 rounded-md p-3.5 flex gap-2.5"
+          >
+            <i
+              class="fa-solid fa-circle-exclamation text-amber-600 dark:text-amber-500 text-xs mt-0.5"
+            ></i>
             <div class="text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
-              <strong>Important Note:</strong> Ensure the version inside <code>src/app/shared/controls/package.json</code> is incremented (e.g. <code>1.0.1</code>) before each publish command, as NPM rejects re-publishing identical versions.
+              <strong>Important Note:</strong> Ensure the version inside
+              <code>src/app/shared/controls/package.json</code> is incremented (e.g.
+              <code>1.0.1</code>) before each publish command, as NPM rejects re-publishing
+              identical versions.
             </div>
           </div>
         </div>
       </section>
-
     </div>
   }
 
   <!-- ═══════════════════════════════════════════ INSTALLATION TAB ═══ -->
   @if (active_tab() === 'install') {
     <div class="space-y-8 max-w-4xl">
-      
       <!-- NPM Installation -->
       <section class="space-y-3">
         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -101,9 +133,12 @@
           1. Install package from NPM
         </h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          Install the published package as a core dev dependency in any standard Angular application workspace.
+          Install the published package as a core dev dependency in any standard Angular application
+          workspace.
         </p>
-        <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.npm_install }}</code></pre>
+        <pre
+          class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+        ><code>{{ snippets.npm_install }}</code></pre>
       </section>
 
       <!-- FontAwesome icons -->
@@ -113,13 +148,18 @@
           2. Embed FontAwesome Icons Asset
         </h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          The custom icons on all dialogs, drawers, and form validation selectors are powered by standard FontAwesome CSS assets. Ensure FontAwesome is available in the target app.
+          The custom icons on all dialogs, drawers, and form validation selectors are powered by
+          standard FontAwesome CSS assets. Ensure FontAwesome is available in the target app.
         </p>
-        <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.fontawesome_install }}</code></pre>
+        <pre
+          class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+        ><code>{{ snippets.fontawesome_install }}</code></pre>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           Add FontAwesome styles to the build definition inside your application configuration:
         </p>
-        <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.fontawesome_angular }}</code></pre>
+        <pre
+          class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+        ><code>{{ snippets.fontawesome_angular }}</code></pre>
       </section>
 
       <!-- Tailwind CSS Content Scanning -->
@@ -129,39 +169,53 @@
           3. Register in Tailwind Content Scanning Paths
         </h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          To ensure Tailwind preserves all specific utility colors, borders, and animations generated inside library components, register the source module folder in the Tailwind configuration scanning path depending on your Tailwind version:
+          To ensure Tailwind preserves all specific utility colors, borders, and animations
+          generated inside library components, register the source module folder in the Tailwind
+          configuration scanning path depending on your Tailwind version:
         </p>
 
         <!-- Tailwind v4 (Angular 21 + PostCSS CSS-first) -->
         <div class="space-y-2 pt-2">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-650 dark:text-indigo-400">Tailwind CSS v4 (Standard / PostCSS)</span>
+            <span
+              class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-650 dark:text-indigo-400"
+              >Tailwind CSS v4 (Standard / PostCSS)</span
+            >
           </div>
           <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-            In Tailwind v4 (default in Angular 21 + <code>@tailwindcss/postcss</code>), the configuration is CSS-first. Add the <code>@source</code> directive directly to your global <code>styles.css</code>:
+            In Tailwind v4 (default in Angular 21 + <code>@tailwindcss/postcss</code>), the
+            configuration is CSS-first. Add the <code>@source</code> directive directly to your
+            global <code>styles.css</code>:
           </p>
-          <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.tailwind_v4_config }}</code></pre>
+          <pre
+            class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+          ><code>{{ snippets.tailwind_v4_config }}</code></pre>
         </div>
 
         <!-- Tailwind v3 (Legacy JS-based config) -->
         <div class="space-y-2 pt-2">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-350">Tailwind CSS v3 (Legacy)</span>
+            <span
+              class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-350"
+              >Tailwind CSS v3 (Legacy)</span
+            >
           </div>
           <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-            If your project uses a legacy Javascript configuration file (<code>tailwind.config.js</code>), add the directory path to the <code>content</code> array:
+            If your project uses a legacy Javascript configuration file
+            (<code>tailwind.config.js</code>), add the directory path to the
+            <code>content</code> array:
           </p>
-          <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.tailwind_config }}</code></pre>
+          <pre
+            class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+          ><code>{{ snippets.tailwind_config }}</code></pre>
         </div>
       </section>
-
     </div>
   }
 
   <!-- ═══════════════════════════════════════════ GLOBAL USAGE TAB ═══ -->
   @if (active_tab() === 'usage') {
     <div class="space-y-6 max-w-4xl">
-      
       <!-- Import & Template Details -->
       <section class="space-y-3">
         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -169,12 +223,13 @@
           Import Standalone Controls &amp; Wiring
         </h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          Since all elements are developed as <strong>fully standalone elements</strong>, import the controls individually in your custom features without requiring heavy NgModules.
+          Since all elements are developed as <strong>fully standalone elements</strong>, import the
+          controls individually in your custom features without requiring heavy NgModules.
         </p>
-        <pre class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"><code>{{ snippets.standalone_usage }}</code></pre>
+        <pre
+          class="bg-slate-900 text-green-300 text-xs rounded-md p-4 overflow-x-auto font-mono shadow-inner border border-slate-800/80"
+        ><code>{{ snippets.standalone_usage }}</code></pre>
       </section>
-
     </div>
   }
-
 </div>

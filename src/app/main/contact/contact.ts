@@ -264,7 +264,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ContactComponent {
   // Replace 'YOUR_FORMSPREE_ID' with your form ID from Formspree.io to link to your inbox.
-  readonly formspreeId = signal<string>('https://formspree.io/f/mykvlayl');
+  readonly formspreeId = signal<string>('mykvlayl');
 
   readonly emailCopied = signal(false);
   readonly phoneCopied = signal(false);
@@ -293,7 +293,7 @@ export class ContactComponent {
     this.error.set(false);
 
     // If no Formspree ID is specified, run mock completion for immediate local confirmation
-    if (this.formspreeId() === 'https://formspree.io/f/mykvlayl') {
+    if (this.formspreeId() === 'YOUR_MESSAGE_ID') {
       setTimeout(() => {
         this.submitting.set(false);
         this.submitted.set(true);

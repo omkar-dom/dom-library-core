@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, isDevMode, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type InstallTab = 'publish' | 'install' | 'usage';
@@ -11,6 +11,7 @@ type InstallTab = 'publish' | 'install' | 'usage';
 })
 export class InstallationComponent {
   readonly active_tab = signal<InstallTab>('publish');
+  readonly is_dev_mode = signal(isDevMode());
 
   readonly tabs: { label: string; value: InstallTab; fa_icon: string }[] = [
     { label: 'How to Publish', value: 'publish', fa_icon: 'fa-cloud-arrow-up' },
@@ -94,6 +95,6 @@ export class FeatureComponent {
   });
 
   constructor(private fb: FormBuilder) {}
-}`
+}`,
   };
 }
