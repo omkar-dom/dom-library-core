@@ -140,6 +140,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./demo/demo.component').then((m) => m.DemoComponent),
       },
+      {
+        path: 'contact',
+        loadComponent: () =>
+          import('./main/contact/contact').then((m) => m.ContactComponent),
+      },
     ],
   },
 ];

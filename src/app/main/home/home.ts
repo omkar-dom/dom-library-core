@@ -1,192 +1,234 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   template: `
-    <!-- ─── Hero ─────────────────────────────────────────────── -->
-    <section class="relative min-h-screen bg-slate-950 flex items-center overflow-hidden">
-
-      <!-- Background grid -->
-      <div class="absolute inset-0 opacity-10"
-           style="background-image: linear-gradient(rgba(245,158,11,0.4) 1px, transparent 1px),
-                                    linear-gradient(90deg, rgba(245,158,11,0.4) 1px, transparent 1px);
+    <!-- Hero Section -->
+    <section class="relative min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden antialiased">
+      
+      <!-- Interactive Grid Backdrop -->
+      <div class="absolute inset-0 opacity-[0.04]"
+           style="background-image: linear-gradient(rgba(139, 92, 246, 0.4) 1px, transparent 1px),
+                                    linear-gradient(90deg, rgba(139, 92, 246, 0.4) 1px, transparent 1px);
                   background-size: 60px 60px;">
       </div>
 
-      <!-- Glow orb -->
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                  w-[600px] h-[600px] rounded-full opacity-10 blur-3xl
-                  bg-amber-500 pointer-events-none"></div>
+      <!-- Glowing Neon Orbs -->
+      <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2
+                  w-[500px] h-[500px] rounded-full opacity-20 blur-[130px]
+                  bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 pointer-events-none animate-pulse-slow"></div>
 
-      <!-- Diagonal accent line -->
+      <!-- Side Accent Lighting -->
       <div class="absolute top-0 right-0 w-px h-full bg-gradient-to-b
-                  from-transparent via-amber-500 to-transparent opacity-30"></div>
+                  from-transparent via-violet-500/25 to-transparent opacity-40"></div>
 
-      <div class="relative max-w-6xl mx-auto px-6 pt-24 pb-20 w-full">
-        <div class="max-w-3xl">
-
-          <!-- Tag -->
-          <div class="inline-flex items-center gap-2 px-3 py-1 border border-amber-500/40
-                      rounded-sm mb-8 animate-fade-in">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-            <span class="text-amber-400 text-xs tracking-widest uppercase font-medium">
-              Angular 21 · Zoneless
-            </span>
+      <div class="relative max-w-6xl mx-auto px-6 pt-32 pb-24 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10">
+        
+        <!-- Left: Branding & Core Headline (7/12 width) -->
+        <div class="lg:col-span-7 text-left space-y-8">
+          <!-- Tag Badge -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 text-violet-300 text-xs font-bold uppercase tracking-wider border border-violet-500/20 animate-fadeIn">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Angular 21 · Standalone Core
           </div>
 
-          <!-- Headline -->
-          <h1 class="font-black text-white leading-none mb-6"
-              style="font-size: clamp(3rem, 8vw, 6rem); font-family: 'Georgia', serif; letter-spacing: -0.02em;">
-            Build things<br>
-            <span class="text-amber-400">that matter.</span>
+          <!-- Major Headline -->
+          <h1 class="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight animate-slideUp">
+            Futuristic Controls. <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-indigo-300 to-teal-300">
+              Zero Performance Lag.
+            </span>
           </h1>
 
-          <!-- Sub -->
-          <p class="text-slate-400 text-lg leading-relaxed mb-10 max-w-xl"
-             style="font-family: 'Georgia', serif;">
-            A minimal, performant Angular 21 starter — zoneless change detection,
-            standalone components, and Tailwind CSS out of the box.
+          <!-- Detailed Subtitle -->
+          <p class="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl animate-slideUpDelay">
+            DOM Library Core is a state-of-the-art Angular standalone component package. Built completely zoneless with signals change detection, dynamic animations, and built-in Tailwind CSS.
           </p>
 
           <!-- CTAs -->
-          <div class="flex flex-wrap gap-4">
+          <div class="flex flex-wrap gap-4 pt-2 animate-slideUpDelay">
             <a
-              routerLink="/counter"
-              class="group flex items-center gap-3 px-7 py-3.5 bg-amber-500 text-slate-950
-                     font-bold text-sm tracking-widest uppercase rounded-sm
-                     hover:bg-amber-400 transition-colors duration-200"
+              routerLink="/documentation"
+              class="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-650 text-white
+                     font-extrabold text-xs tracking-widest uppercase rounded-xl
+                     shadow-lg shadow-violet-900/25 hover:shadow-violet-900/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
             >
-              Try Counter
+              Get Started
               <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                   fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
               </svg>
             </a>
             <a
               routerLink="/contact"
-              class="flex items-center gap-3 px-7 py-3.5 border border-slate-700 text-slate-300
-                     font-bold text-sm tracking-widest uppercase rounded-sm
-                     hover:border-slate-500 hover:text-white transition-colors duration-200"
+              class="flex items-center gap-3 px-8 py-4 border border-slate-800 bg-slate-900/40 text-slate-300
+                     font-extrabold text-xs tracking-widest uppercase rounded-xl backdrop-blur-sm
+                     hover:border-slate-600 hover:text-white hover:bg-slate-900/80 transition-all duration-300"
             >
-              Contact Us
+              Get In Touch
             </a>
           </div>
         </div>
 
-        <!-- Floating stat cards (desktop) -->
-        <div class="hidden lg:flex absolute right-6 top-1/2 -translate-y-1/2
-                    flex-col gap-4 w-52">
-          @for (stat of stats; track stat.label) {
-            <div class="bg-slate-900 border border-slate-800 rounded-sm p-4
-                        hover:border-amber-500/40 transition-colors duration-300 group">
-              <div class="text-2xl font-black text-white mb-1 group-hover:text-amber-400
-                          transition-colors" style="font-family: 'Georgia', serif;">
-                {{ stat.value }}
+        <!-- Right: Modern Visuals / Floating Stats (5/12 width) -->
+        <div class="lg:col-span-5 relative mt-8 lg:mt-0 flex justify-center">
+          <div class="relative w-full max-w-sm">
+            <!-- Neon background glow for cards -->
+            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-br from-violet-500 to-teal-400 opacity-20 blur-xl"></div>
+            
+            <div class="relative bg-slate-900/60 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl space-y-6">
+              <h3 class="text-sm font-extrabold tracking-widest text-slate-400 uppercase">Engine Benchmarks</h3>
+              
+              <div class="space-y-4">
+                @for (stat of stats; track stat.label) {
+                  <div class="group flex items-center justify-between p-4 bg-slate-950/60 border border-slate-850 rounded-2xl hover:border-violet-500/30 transition-all duration-300">
+                    <div class="text-left">
+                      <span class="text-xs text-slate-500 uppercase tracking-wider block">{{ stat.label }}</span>
+                      <span class="text-sm font-bold text-slate-300 mt-0.5 block">{{ stat.desc }}</span>
+                    </div>
+                    <div class="text-2xl font-black text-violet-400 group-hover:text-violet-300 transition-colors">
+                      {{ stat.value }}
+                    </div>
+                  </div>
+                }
               </div>
-              <div class="text-xs text-slate-500 tracking-widest uppercase">{{ stat.label }}</div>
             </div>
-          }
+          </div>
         </div>
+
       </div>
 
-      <!-- Scroll hint -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span class="text-slate-600 text-xs tracking-widest uppercase">Scroll</span>
-        <div class="w-px h-10 bg-gradient-to-b from-slate-600 to-transparent"></div>
+      <!-- Scroll Down Badge -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none opacity-50">
+        <span class="text-slate-500 text-[10px] font-extrabold tracking-widest uppercase">Overview</span>
+        <div class="w-px h-10 bg-gradient-to-b from-slate-700 to-transparent"></div>
       </div>
     </section>
 
-    <!-- ─── Features ──────────────────────────────────────────── -->
-    <section class="bg-slate-900 py-24 border-t border-slate-800">
-      <div class="max-w-6xl mx-auto px-6">
+    <!-- Features Overview -->
+    <section class="relative bg-slate-900/60 py-24 border-t border-slate-900 overflow-hidden">
+      <!-- Grid accent overlay -->
+      <div class="absolute inset-0 opacity-[0.01]"
+           style="background-image: linear-gradient(rgba(139, 92, 246, 0.4) 1px, transparent 1px),
+                                    linear-gradient(90deg, rgba(139, 92, 246, 0.4) 1px, transparent 1px);
+                  background-size: 80px 80px;">
+      </div>
 
-        <div class="mb-16">
-          <p class="text-amber-400 text-xs tracking-widest uppercase mb-3 font-medium">
-            What's included
+      <div class="relative max-w-6xl mx-auto px-6 z-10">
+        
+        <!-- Section Header -->
+        <div class="mb-16 text-left">
+          <p class="text-violet-400 text-xs font-bold uppercase tracking-wider mb-2">
+            Why Choose DOM?
           </p>
-          <h2 class="text-3xl font-black text-white" style="font-family: 'Georgia', serif;">
-            Everything you need.
+          <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">
+            Designed for the Professional.
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-slate-800">
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           @for (feature of features; track feature.title) {
-            <div class="bg-slate-900 p-8 group hover:bg-slate-800/50 transition-colors duration-300">
-              <div class="w-10 h-10 rounded-sm bg-amber-500/10 border border-amber-500/20
-                          flex items-center justify-center mb-6
-                          group-hover:bg-amber-500/20 transition-colors">
-                <span class="text-amber-400 text-xl">{{ feature.icon }}</span>
+            <div class="group relative bg-slate-950/40 border border-slate-850 p-8 rounded-2xl hover:border-violet-500/40 hover:bg-slate-950/80 transition-all duration-300">
+              <!-- Glow accent border hover -->
+              <div class="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-violet-500/0 group-hover:via-violet-500/40 to-transparent transition-all duration-300"></div>
+
+              <div class="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20
+                          flex items-center justify-center mb-6 text-2xl
+                          group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+                <span class="text-violet-400 group-hover:text-white">{{ feature.icon }}</span>
               </div>
-              <h3 class="text-white font-bold text-lg mb-3 tracking-tight"
-                  style="font-family: 'Georgia', serif;">
+              <h3 class="text-white font-bold text-lg mb-2 text-left">
                 {{ feature.title }}
               </h3>
-              <p class="text-slate-500 text-sm leading-relaxed">{{ feature.desc }}</p>
+              <p class="text-slate-400 text-sm leading-relaxed text-left">
+                {{ feature.desc }}
+              </p>
             </div>
           }
         </div>
+
       </div>
     </section>
 
-    <!-- ─── CTA Banner ─────────────────────────────────────────── -->
-    <section class="bg-amber-500 py-16">
-      <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row
-                  items-center justify-between gap-8">
-        <div>
-          <h2 class="text-slate-950 text-3xl font-black" style="font-family: 'Georgia', serif;">
-            Ready to build?
+    <!-- Bottom Call-To-Action -->
+    <section class="relative py-20 bg-gradient-to-r from-violet-600 via-indigo-650 to-indigo-700 overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0))]"></div>
+      <div class="relative max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 z-10">
+        <div class="text-left">
+          <h2 class="text-white text-3xl font-black tracking-tight leading-tight">
+            Ready to upgrade your interface?
           </h2>
-          <p class="text-slate-800 text-sm mt-1">Start your journey with Apex today.</p>
+          <p class="text-violet-100 text-sm mt-2 font-medium">Explore standard components, layouts, and input models today.</p>
         </div>
         <a
-          routerLink="/contact"
-          class="flex items-center gap-3 px-8 py-4 bg-slate-950 text-white
-                 font-bold text-sm tracking-widest uppercase rounded-sm
-                 hover:bg-slate-800 transition-colors duration-200 shrink-0"
+          routerLink="/documentation"
+          class="flex items-center gap-3 px-8 py-4 bg-white text-slate-950
+                 font-extrabold text-xs tracking-widest uppercase rounded-xl
+                 shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 shrink-0"
         >
-          Get In Touch
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          Explore Docs
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
           </svg>
         </a>
       </div>
     </section>
   `,
   styles: [`
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    .animate-fade-in { animation: fade-in 0.6s ease both; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.22; transform: translate(-50%, -50%) scale(1.08); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-slideUp {
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-slideUpDelay {
+      opacity: 0;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 10s infinite ease-in-out;
+    }
   `]
 })
 export class Home {
-  stats = [
-    { value: '21',    label: 'Angular version' },
-    { value: '0ms',   label: 'Zone overhead'   },
-    { value: '100%',  label: 'Standalone'       },
+  readonly stats = [
+    { value: 'v21',    label: 'Framework Core', desc: 'Native Angular 21 Support' },
+    { value: '0ms',   label: 'Detection Lag',  desc: 'Zoneless Change Detection' },
+    { value: '100%',  label: 'Modular Design', desc: 'Fully Standalone Controls' },
   ];
 
-  features = [
+  readonly features = [
     {
       icon: '⚡',
-      title: 'Zoneless Detection',
-      desc:  'Angular 21 ships with signals-first change detection — no Zone.js, no overhead.',
+      title: 'Zoneless Signals',
+      desc: 'Harness the pure reactive power of Angular Signals. Zero Zone.js runtime checking overhead.',
     },
     {
       icon: '◈',
-      title: 'Standalone Components',
-      desc:  'Each component is fully self-contained with its own imports — no NgModule boilerplate.',
+      title: 'Modular Standalone Controls',
+      desc: 'Import only what you need. Zero NgModule configuration boilerplate. Clean, tree-shakeable inputs.',
     },
     {
       icon: '✦',
-      title: 'Tailwind CSS',
-      desc:  'Utility-first styling with zero unused CSS in production. Fast to write, easy to maintain.',
+      title: 'Tailwind CSS Built-in',
+      desc: 'Seamless styling matching your exact system aesthetics. Optimized compilation footprints.',
     },
   ];
 }
