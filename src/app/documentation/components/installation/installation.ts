@@ -14,7 +14,6 @@ export class InstallationComponent {
   readonly is_dev_mode = signal(isDevMode());
 
   readonly tabs: { label: string; value: InstallTab; fa_icon: string }[] = [
-    { label: 'How to Publish', value: 'publish', fa_icon: 'fa-cloud-arrow-up' },
     { label: 'Installation Guide', value: 'install', fa_icon: 'fa-download' },
     { label: 'Global Usage', value: 'usage', fa_icon: 'fa-book-open' },
   ];
@@ -97,4 +96,14 @@ export class FeatureComponent {
   constructor(private fb: FormBuilder) {}
 }`,
   };
+
+  ngOnInit() {
+    if (this.is_dev_mode()) {
+      this.tabs.unshift({
+        label: 'How to Publish',
+        value: 'publish',
+        fa_icon: 'fa-cloud-arrow-up',
+      });
+    }
+  }
 }
