@@ -1,38 +1,39 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   effect,
-  inject,
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import moment from 'moment';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
 import {
   DateValueFormat,
   formatForValue,
-  getDateBoundsFromControl,
   parseToDate,
 } from '../date-format.util';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 @Component({
   selector: 'dom-datetime-picker',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     DomErrorComponent,
   ],
   templateUrl: './dom-input-date-time.html',
 })
-export class DomDateTimePickerComponent {
-  readonly form_group = input.required<FormGroup>();
-  readonly form_control = input.required<string>();
+export class DomDateTimePickerComponent<T extends FormModel = FormModel> {
+  readonly form = input<any>();
+  readonly form_group = input<FormGroup>();
+  readonly form_control = input.required<Extract<keyof T, string>>();
   readonly label = input<string>('');
   readonly placeholder = input<string>('');
   readonly hint = input<string>();
@@ -44,21 +45,38 @@ export class DomDateTimePickerComponent {
   readonly on_change = output<string | null>();
   readonly on_blur = output<string | null>();
 
-  readonly is_required = computed(() => this.control().hasValidator(Validators.required));
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
+  });
 
-  readonly control = computed<FormControl>(
-    () => this.form_group().get(this.form_control()) as FormControl,
-  );
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
 
   readonly pickerDate = signal<Date | null>(null);
   readonly pickerTime = signal('00:00');
 
-  readonly dateBounds = computed(() =>
-    getDateBoundsFromControl(this.control(), this.format(), this.custom_format(), true),
-  );
+  readonly minDate = computed(() => {
+    const f = this.field();
+    const minVal = f?.min?.();
+    return minVal ? parseToDate(minVal, this.format(), this.custom_format(), true) : null;
+  });
 
-  readonly minDate = computed(() => this.dateBounds().min);
-  readonly maxDate = computed(() => this.dateBounds().max);
+  readonly maxDate = computed(() => {
+    const f = this.field();
+    const maxVal = f?.max?.();
+    return maxVal ? parseToDate(maxVal, this.format(), this.custom_format(), true) : null;
+  });
 
   readonly htmlInputValue = computed(() => {
     const date = this.pickerDate();
@@ -75,37 +93,53 @@ export class DomDateTimePickerComponent {
     return date ? moment(date).format('YYYY-MM-DD') : null;
   });
 
-  private readonly destroyRef = inject(DestroyRef);
-
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      this.is_disabled()
-        ? ctrl.disable({ emitEvent: false })
-        : ctrl.enable({ emitEvent: false });
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        const fmt = this.format();
+        const customFmt = this.custom_format();
+        const date = parseToDate(val, fmt, customFmt, true);
+        this.pickerDate.set(date);
+        this.pickerTime.set(date ? moment(date).format('HH:mm') : '00:00');
+        untracked(() => {
+          this.on_change.emit(val as any);
+        });
+      }
     });
 
-    effect(() => {
-      const ctrl = this.control();
-      const fmt = this.format();
-      const customFmt = this.custom_format();
-      if (!ctrl) return;
-      const date = parseToDate(ctrl.value, fmt, customFmt, true);
-      this.pickerDate.set(date);
-      this.pickerTime.set(date ? moment(date).format('HH:mm') : '00:00');
-    });
+    effect((onCleanup) => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        // Init value
+        const val = ctrl.value;
+        const fmt = this.format();
+        const customFmt = this.custom_format();
+        const date = parseToDate(val, fmt, customFmt, true);
+        this.pickerDate.set(date);
+        this.pickerTime.set(date ? moment(date).format('HH:mm') : '00:00');
 
-    effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      ctrl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((val) => this.on_change.emit(val));
+        const sub = ctrl.valueChanges.subscribe(v => {
+          const d = parseToDate(v, fmt, customFmt, true);
+          this.pickerDate.set(d);
+          this.pickerTime.set(d ? moment(d).format('HH:mm') : '00:00');
+          this.on_change.emit(v);
+        });
+
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
+
+        onCleanup(() => sub.unsubscribe());
+      }
     });
   }
 
   onHtmlDateChange(event: Event): void {
+    if (this.is_disabled()) return;
     const val = (event.target as HTMLInputElement).value;
     if (!val) {
       this.setFormattedValue(null);
@@ -117,6 +151,7 @@ export class DomDateTimePickerComponent {
   }
 
   onTimeInput(event: Event): void {
+    if (this.is_disabled()) return;
     const time = (event.target as HTMLInputElement).value;
     if (!time) {
       return;
@@ -142,11 +177,36 @@ export class DomDateTimePickerComponent {
   private setFormattedValue(date: Date | null): void {
     const formatted = date
       ? formatForValue(date, this.format(), this.custom_format(), true)
-      : '';
-    this.control().setValue(formatted, { emitEvent: true });
+      : null;
+    
+    const f = this.field();
+    if (f) {
+      f.value.set(formatted as any);
+      f.markAsDirty();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(formatted);
+        ctrl.markAsDirty();
+      }
+    }
     this.pickerDate.set(date);
     if (date) {
       this.pickerTime.set(moment(date).format('HH:mm'));
+    }
+  }
+
+  onBlur(): void {
+    const f = this.field();
+    if (f) {
+      f.markAsTouched();
+      this.on_blur.emit(f.value() as any);
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.markAsTouched();
+        this.on_blur.emit(ctrl.value);
+      }
     }
   }
 }

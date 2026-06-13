@@ -3,15 +3,14 @@ import {
   input,
   output,
   computed,
-  inject,
-  DestroyRef,
-  effect,
   signal,
+  effect,
+  untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 export interface CountryCodeOption {
   id: string;
@@ -29,9 +28,10 @@ export interface CountryCodeOption {
   templateUrl: './dom-mobile-number.component.html',
   styleUrl: './dom-mobile-number.component.css',
 })
-export class DomMobileNumberComponent {
-  readonly form_group = input.required<FormGroup>();
-  readonly form_control = input.required<string>();
+export class DomMobileNumberComponent<T extends FormModel = FormModel> {
+  readonly form = input<any>();
+  readonly form_group = input<FormGroup>();
+  readonly form_control = input.required<Extract<keyof T, string>>();
   readonly label = input<string>('');
   readonly placeholder = input<string>('Enter phone number');
   readonly hint = input<string>('');
@@ -66,27 +66,25 @@ export class DomMobileNumberComponent {
   });
   readonly local_number = signal<string>('');
 
-  readonly control = computed<FormControl>(
-    () => this.form_group().get(this.form_control()) as FormControl,
-  );
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
+  });
 
-  private is_required_original = false;
-  private readonly destroyRef = inject(DestroyRef);
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
 
   readonly is_required = computed(() => {
-    const ctrl = this.control();
-    return ctrl ? ctrl.hasValidator(Validators.required) : false;
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
   });
 
   constructor() {
-    // Preserve the original required validator state
-    effect(() => {
-      const ctrl = this.control();
-      if (ctrl && !this.is_required_original) {
-        this.is_required_original = ctrl.hasValidator(Validators.required);
-      }
-    });
-
     // Sync default country when input arrives
     effect(() => {
       const def = this.default_country().toLowerCase();
@@ -96,82 +94,60 @@ export class DomMobileNumberComponent {
       }
     });
 
-    // Handle disables
+    // Populate initial value from Field signal or legacyControl if pre-filled
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      if (this.is_disabled()) {
-        ctrl.disable({ emitEvent: false });
-      } else {
-        ctrl.enable({ emitEvent: false });
+      const f = this.field();
+      const ctrl = this.legacyControl();
+      const val = f ? f.value() : (ctrl ? ctrl.value : undefined);
+      if (val) {
+        const parsed = this.parsePhoneNumber(val as string);
+        untracked(() => {
+          this.selected_country.set(parsed.country);
+          this.local_number.set(parsed.number);
+        });
       }
     });
 
-    // Populate initial value from FormControl if pre-filled
+    // Sync input events back to the parent Form Control / Field signal
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      const initialValue = ctrl.value;
-      if (initialValue) {
-        const parsed = this.parsePhoneNumber(initialValue);
-        this.selected_country.set(parsed.country);
-        this.local_number.set(parsed.number);
-      }
-    });
-
-    // Sync input events back to the parent Reactive Form Control
-    effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-
       const code = this.selected_country().code;
       const num = this.local_number().trim();
       const combinedValue = num ? `${code}${num}` : '';
-
-      if (ctrl.value !== combinedValue) {
-        ctrl.setValue(combinedValue, { emitEvent: false });
-        ctrl.markAsDirty();
-        this.on_change.emit(combinedValue);
+      
+      const f = this.field();
+      if (f) {
+        const currentVal = f.value();
+        if (currentVal !== combinedValue) {
+          untracked(() => {
+            f.value.set(combinedValue as any);
+            f.markAsDirty();
+            this.on_change.emit(combinedValue);
+          });
+        }
+      } else {
+        const ctrl = this.legacyControl();
+        if (ctrl) {
+          const currentVal = ctrl.value;
+          if (currentVal !== combinedValue) {
+            untracked(() => {
+              ctrl.setValue(combinedValue);
+              ctrl.markAsDirty();
+              this.on_change.emit(combinedValue);
+            });
+          }
+        }
       }
     });
 
-    // Dynamic Validation Effect based on the selected country's min/max bounds
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      const country = this.selected_country();
-
-      ctrl.clearValidators();
-
-      const newValidators = [];
-      if (this.is_required_original) {
-        newValidators.push(Validators.required);
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
       }
-
-      if (country.min) {
-        newValidators.push((c: any) => {
-          if (!c.value) return null;
-          const national = c.value.substring(country.code.length).replace(/[^\d]/g, '');
-          if (national && national.length < country.min!) {
-            return { minlength: { requiredLength: country.min, actualLength: national.length } };
-          }
-          return null;
-        });
-      }
-
-      if (country.max) {
-        newValidators.push((c: any) => {
-          if (!c.value) return null;
-          const national = c.value.substring(country.code.length).replace(/[^\d]/g, '');
-          if (national && national.length > country.max!) {
-            return { maxlength: { requiredLength: country.max, actualLength: national.length } };
-          }
-          return null;
-        });
-      }
-
-      ctrl.setValidators(newValidators);
-      ctrl.updateValueAndValidity({ emitEvent: false });
     });
   }
 
@@ -192,7 +168,12 @@ export class DomMobileNumberComponent {
     const matched = this.countries().find((c) => c.code === code && c.id === id);
     if (matched) {
       this.selected_country.set(matched);
-      this.control()?.markAsTouched();
+      const f = this.field();
+      if (f) {
+        f.markAsTouched();
+      } else {
+        this.legacyControl()?.markAsTouched();
+      }
     }
   }
 
@@ -200,6 +181,11 @@ export class DomMobileNumberComponent {
     const input = event.target as HTMLInputElement;
     const val = input.value.replace(/[^\d\-\s]/g, '');
     this.local_number.set(val);
-    this.control()?.markAsTouched();
+    const f = this.field();
+    if (f) {
+      f.markAsTouched();
+    } else {
+      this.legacyControl()?.markAsTouched();
+    }
   }
 }

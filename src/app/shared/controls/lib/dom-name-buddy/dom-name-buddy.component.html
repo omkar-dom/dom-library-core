@@ -6,88 +6,175 @@
     </h4>
   }
 
-  <!-- Responsive grid columns -->
-  <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 w-full">
-    
-    <!-- Salutation Selector -->
-    @if (!hide_salutation() && salutation_ctrl()) {
-      <div class="flex flex-col gap-1 sm:col-span-2">
-        <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
-          Salutation
-          @if (is_salutation_required()) {
-            <span class="text-rose-500 ml-0.5">*</span>
-          }
-        </label>
-        <div class="relative flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500 h-[30px] transition">
-          <select [formControl]="salutation_ctrl()!" 
-                  class="w-full bg-transparent px-2 py-0.5 text-sm h-[28px] text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer">
-            <option value="">--</option>
-            @for (opt of salutation_options; track opt) {
-              <option [value]="opt">{{ opt }}</option>
+  @if (form()) {
+    <!-- Responsive grid columns for Signal Forms -->
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 w-full">
+      
+      <!-- Salutation Selector -->
+      @if (!hide_salutation() && salutation_field()) {
+        <div class="flex flex-col gap-1 sm:col-span-2">
+          <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+            Salutation
+            @if (is_salutation_required()) {
+              <span class="text-rose-500 ml-0.5">*</span>
             }
-          </select>
+          </label>
+          <div class="relative flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500 h-[30px] transition">
+            <select [formField]="$any(salutation_field())" 
+                    class="w-full bg-transparent px-2 py-0.5 text-sm h-[28px] text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer">
+              <option value="">--</option>
+              @for (opt of salutation_options; track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+          <dom-error class="ml-1 mt-0.5" [field]="salutation_field()!" />
         </div>
-        <dom-error class="ml-1 mt-0.5" [control]="salutation_ctrl()!" />
-      </div>
-    }
+      }
 
-    <!-- First Name Input -->
-    <div class="flex flex-col gap-1"
-         [ngClass]="{
-           'sm:col-span-4': !hide_salutation() && !hide_middle_name(),
-           'sm:col-span-5': (!hide_salutation() && hide_middle_name()) || (hide_salutation() && !hide_middle_name()),
-           'sm:col-span-6': hide_salutation() && hide_middle_name()
-         }">
-      <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
-        First Name
-        @if (is_first_required()) {
-          <span class="text-rose-500 ml-0.5">*</span>
-        }
-      </label>
-      <input type="text" 
-             [formControl]="first_ctrl()" 
-             placeholder="First name" 
-             class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
-      <dom-error class="ml-1 mt-0.5" [control]="first_ctrl()" />
-    </div>
-
-    <!-- Middle Name Input -->
-    @if (!hide_middle_name() && middle_ctrl()) {
-      <div class="flex flex-col gap-1 sm:col-span-3">
+      <!-- First Name Input -->
+      <div class="flex flex-col gap-1"
+           [ngClass]="{
+             'sm:col-span-4': !hide_salutation() && !hide_middle_name(),
+             'sm:col-span-5': (!hide_salutation() && hide_middle_name()) || (hide_salutation() && !hide_middle_name()),
+             'sm:col-span-6': hide_salutation() && hide_middle_name()
+           }">
         <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
-          Middle Name
-          @if (is_middle_required()) {
+          First Name
+          @if (is_first_required()) {
             <span class="text-rose-500 ml-0.5">*</span>
           }
         </label>
         <input type="text" 
-               [formControl]="middle_ctrl()!" 
-               placeholder="Middle name" 
+               [formField]="$any(first_field())" 
+               placeholder="First name" 
                class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
-        <dom-error class="ml-1 mt-0.5" [control]="middle_ctrl()!" />
+        <dom-error class="ml-1 mt-0.5" [field]="first_field()" />
       </div>
-    }
 
-    <!-- Last Name Input -->
-    <div class="flex flex-col gap-1"
-         [ngClass]="{
-           'sm:col-span-3': !hide_salutation() && !hide_middle_name(),
-           'sm:col-span-5': !hide_salutation() && hide_middle_name(),
-           'sm:col-span-4': hide_salutation() && !hide_middle_name(),
-           'sm:col-span-6': hide_salutation() && hide_middle_name()
-         }">
-      <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
-        Last Name
-        @if (is_last_required()) {
-          <span class="text-rose-500 ml-0.5">*</span>
-        }
-      </label>
-      <input type="text" 
-             [formControl]="last_ctrl()" 
-             placeholder="Last name" 
-             class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
-      <dom-error class="ml-1 mt-0.5" [control]="last_ctrl()" />
+      <!-- Middle Name Input -->
+      @if (!hide_middle_name() && middle_field()) {
+        <div class="flex flex-col gap-1 sm:col-span-3">
+          <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+            Middle Name
+            @if (is_middle_required()) {
+              <span class="text-rose-500 ml-0.5">*</span>
+            }
+          </label>
+          <input type="text" 
+                 [formField]="$any(middle_field())" 
+                 placeholder="Middle name" 
+                 class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
+          <dom-error class="ml-1 mt-0.5" [field]="middle_field()!" />
+        </div>
+      }
+
+      <!-- Last Name Input -->
+      <div class="flex flex-col gap-1"
+           [ngClass]="{
+             'sm:col-span-3': !hide_salutation() && !hide_middle_name(),
+             'sm:col-span-5': !hide_salutation() && hide_middle_name(),
+             'sm:col-span-4': hide_salutation() && !hide_middle_name(),
+             'sm:col-span-6': hide_salutation() && hide_middle_name()
+           }">
+        <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+          Last Name
+          @if (is_last_required()) {
+            <span class="text-rose-500 ml-0.5">*</span>
+          }
+        </label>
+        <input type="text" 
+               [formField]="$any(last_field())" 
+               placeholder="Last name" 
+               class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
+        <dom-error class="ml-1 mt-0.5" [field]="last_field()" />
+      </div>
+
     </div>
+  } @else if (form_group()) {
+    <!-- Responsive grid columns for Legacy Forms -->
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 w-full">
+      
+      <!-- Salutation Selector -->
+      @if (!hide_salutation() && legacy_salutation_control()) {
+        <div class="flex flex-col gap-1 sm:col-span-2">
+          <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+            Salutation
+            @if (is_salutation_required()) {
+              <span class="text-rose-500 ml-0.5">*</span>
+            }
+          </label>
+          <div class="relative flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500 h-[30px] transition">
+            <select [formControl]="legacy_salutation_control()!" 
+                    class="w-full bg-transparent px-2 py-0.5 text-sm h-[28px] text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer">
+              <option value="">--</option>
+              @for (opt of salutation_options; track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+          <dom-error class="ml-1 mt-0.5" [control]="legacy_salutation_control()!" />
+        </div>
+      }
 
-  </div>
+      <!-- First Name Input -->
+      <div class="flex flex-col gap-1"
+           [ngClass]="{
+             'sm:col-span-4': !hide_salutation() && !hide_middle_name(),
+             'sm:col-span-5': (!hide_salutation() && hide_middle_name()) || (hide_salutation() && !hide_middle_name()),
+             'sm:col-span-6': hide_salutation() && hide_middle_name()
+           }">
+        <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+          First Name
+          @if (is_first_required()) {
+            <span class="text-rose-500 ml-0.5">*</span>
+          }
+        </label>
+        <input type="text" 
+               [formControl]="legacy_first_control()!" 
+               placeholder="First name" 
+               class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
+        <dom-error class="ml-1 mt-0.5" [control]="legacy_first_control()!" />
+      </div>
+
+      <!-- Middle Name Input -->
+      @if (!hide_middle_name() && legacy_middle_control()) {
+        <div class="flex flex-col gap-1 sm:col-span-3">
+          <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+            Middle Name
+            @if (is_middle_required()) {
+              <span class="text-rose-500 ml-0.5">*</span>
+            }
+          </label>
+          <input type="text" 
+                 [formControl]="legacy_middle_control()!" 
+                 placeholder="Middle name" 
+                 class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
+          <dom-error class="ml-1 mt-0.5" [control]="legacy_middle_control()!" />
+        </div>
+      }
+
+      <!-- Last Name Input -->
+      <div class="flex flex-col gap-1"
+           [ngClass]="{
+             'sm:col-span-3': !hide_salutation() && !hide_middle_name(),
+             'sm:col-span-5': !hide_salutation() && hide_middle_name(),
+             'sm:col-span-4': hide_salutation() && !hide_middle_name(),
+             'sm:col-span-6': hide_salutation() && hide_middle_name()
+           }">
+        <label class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 select-none flex items-center">
+          Last Name
+          @if (is_last_required()) {
+            <span class="text-rose-500 ml-0.5">*</span>
+          }
+        </label>
+        <input type="text" 
+               [formControl]="legacy_last_control()!" 
+               placeholder="Last name" 
+               class="h-[30px] px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-800 dark:text-slate-100 transition w-full" />
+        <dom-error class="ml-1 mt-0.5" [control]="legacy_last_control()!" />
+      </div>
+
+    </div>
+  }
 </div>

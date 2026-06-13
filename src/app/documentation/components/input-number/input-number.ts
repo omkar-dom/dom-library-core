@@ -57,13 +57,13 @@ export class InputNumber {
 
     simple:
 `// TypeScript
-this.simple_form = this.fb.group({
-  quantity: [null, [Validators.required, Validators.min(1)]],
-});
+// Signal Forms definition
+const quantityModel = signal(null);
+const form = form(quantityModel, Validators.required, Validators.min(1)]);
 
 // Template
 <dom-input-number
-  [form_group]="simple_form"
+  [form]="form"
   form_control="quantity"
   label="Quantity"
   placeholder="Enter quantity"
@@ -73,7 +73,7 @@ this.simple_form = this.fb.group({
 `// minmax_field: [null, [Validators.required, Validators.min(0), Validators.max(100)]]
 
 <dom-input-number
-  [form_group]="form"
+  [form]="form"
   form_control="minmax_field"
   label="Score (0 – 100)"
   placeholder="0 to 100"
@@ -85,7 +85,7 @@ this.simple_form = this.fb.group({
 `// decimal_field: [null]
 
 <dom-input-number
-  [form_group]="form"
+  [form]="form"
   form_control="decimal_field"
   label="Price"
   placeholder="0.00"
@@ -98,7 +98,7 @@ this.simple_form = this.fb.group({
 `// readonly_field: [42]
 
 <dom-input-number
-  [form_group]="form"
+  [form]="form"
   form_control="readonly_field"
   label="Reference value"
   [is_readonly]="true"
@@ -108,7 +108,7 @@ this.simple_form = this.fb.group({
 `// hint_field: [null]
 
 <dom-input-number
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Weight (kg)"
   placeholder="e.g. 75"
@@ -117,7 +117,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-input-number
-  [form_group]="form"
+  [form]="form"
   form_control="amount"
   (on_change)="handleChange($event)"
   (on_blur)="handleBlur($event)"
@@ -173,7 +173,13 @@ this.simple_form = this.fb.group({
   // ─── API tab ─────────────────────────────────────────────────────────────────
 
   readonly api_inputs = [
-    { name: 'form_group',    type: 'FormGroup',               default_val: 'required', description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',    type: 'FormGroup',               default_val: 'required', description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control',  type: 'string',                  default_val: 'required', description: 'Key of the control inside the form group.' },
     { name: 'label',         type: 'string',                  default_val: "''",       description: 'Label displayed above the input field.' },
     { name: 'placeholder',   type: 'string',                  default_val: "''",       description: 'Placeholder text shown inside the input.' },

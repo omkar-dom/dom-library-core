@@ -54,7 +54,7 @@ this.form = this.fb.group({
 
 // HTML Single Select
 <dom-select-button
-  [form_group]="form"
+  [form]="form"
   form_control="speed"
   [options]="speed_options"
   label="Processing Speed"
@@ -66,7 +66,7 @@ this.form = this.fb.group({
 
 // HTML Multi Select
 <dom-select-button
-  [form_group]="form"
+  [form]="form"
   form_control="devices"
   [options]="device_options"
   [multiple]="true"
@@ -75,6 +75,12 @@ this.form = this.fb.group({
   };
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group', type: 'FormGroup', default_val: 'required', description: 'Parent form group containing the control key.' },
     { name: 'form_control', type: 'string', default_val: 'required', description: 'String key identifier matching form control.' },
     { name: 'options', type: 'SelectButtonOption[]', default_val: 'required', description: 'List of button choices: label, value, icon, disabled.' },

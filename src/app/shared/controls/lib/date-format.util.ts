@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { AbstractControl, FormControl, ValidatorFn } from '@angular/forms';
 
-export type DateValueFormat = 'iso' | 'timestamp' | 'custom';
+export type DateValueFormat = 'iso' | 'timestamp' | 'custom' | 'date';
 
 export interface DomDateBoundValidator extends ValidatorFn {
   domDateMin?: string;
@@ -108,9 +108,13 @@ export function formatForValue(
   format: DateValueFormat,
   customFormat?: string,
   isDateTime = false,
-): string {
+): any {
   if (!date || isNaN(date.getTime())) {
-    return '';
+    return null;
+  }
+
+  if (format === 'date') {
+    return date;
   }
 
   switch (format) {
@@ -139,6 +143,11 @@ export function parseToDate(
   }
 
   const str = String(value);
+
+  if (format === 'date') {
+    const parsed = moment(str);
+    return parsed.isValid() ? parsed.toDate() : null;
+  }
 
   if (format === 'timestamp') {
     const ts = Number(str);

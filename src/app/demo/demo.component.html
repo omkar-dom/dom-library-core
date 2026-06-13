@@ -82,14 +82,14 @@
           
           <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-input-numeric text-indigo-500"></i>
-              <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Interactive Reactive Form Fields</h3>
+              <i class="fa-solid fa-square-poll-horizontal text-indigo-500"></i>
+              <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Employee Registration Form (Signal Forms)</h3>
             </div>
             
             <!-- Horizontal/Vertical Preference Toggle using Custom select-button -->
             <div class="scale-90 origin-right">
               <dom-select-button
-                [form_group]="form"
+                [form]="prefForm"
                 [form_control]="'layout_mode'"
                 [options]="select_button_layout_options"
                 label=""
@@ -97,201 +97,227 @@
             </div>
           </div>
 
-          <div class="p-6 md:p-8 space-y-12">
+          <form [formRoot]="employeeForm" (submit)="submit(); $event.preventDefault()" novalidate class="p-6 md:p-8 space-y-12">
             
-            <!-- Sub-Section A: 👤 Personal Profile Identity -->
+            <!-- Sub-Section A: 👤 Personal Details -->
             <section class="space-y-6">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
-                <i class="fa-solid fa-user-circle text-indigo-400"></i> 1. Personal Identity Profile
+                <i class="fa-solid fa-user-circle text-indigo-400"></i> 1. Personal Details
               </h4>
               
-              <!-- Custom Name Buddy integration -->
-              <dom-name-buddy
-                [form_group]="form"
-                salutation_control="salutation"
-                first_name_control="first_name"
-                middle_name_control="middle_name"
-                last_name_control="last_name"
-                [hide_salutation]="false"
-                [hide_middle_name]="false"
-                label="Identity Coordinates"
-              />
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-                <dom-input-number
-                  [form_group]="form"
-                  [form_control]="'age'"
-                  label="Age Constraint"
-                  [min]="18"
-                  [max]="99"
-                  [hint]="'Eligible age: 18 - 99'"
-                  [placeholder]="'25'"
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-input
+                  [form]="employeeForm"
+                  form_control="fullName"
+                  label="Full Name"
+                  placeholder="John Doe"
                 />
-                
+
+                <dom-input
+                  [form]="employeeForm"
+                  form_control="email"
+                  label="Email Address"
+                  type="email"
+                  placeholder="john.doe@company.com"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <dom-mobile-number
+                  [form]="employeeForm"
+                  form_control="phone"
+                  label="Mobile Number"
+                  placeholder="9876543210"
+                />
+
+                <dom-input-number
+                  [form]="employeeForm"
+                  form_control="age"
+                  label="Age"
+                  [min]="18"
+                  [max]="65"
+                  [hint]="'Eligible age: 18 - 65'"
+                  placeholder="30"
+                />
+
                 <dom-date-picker
-                  [form_group]="form"
-                  [form_control]="'birth_date'"
+                  [form]="employeeForm"
+                  form_control="dateOfBirth"
+                  format="date"
                   label="Date of Birth"
                   placeholder="Select birth date"
-                  format="iso"
-                  [hint]="'Stored format: YYYY-MM-DD'"
+                  [hint]="'Must be 18+ years old'"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-input
+                  [form]="employeeForm"
+                  form_control="aadhaarNumber"
+                  label="Aadhaar Number"
+                  placeholder="12-digit ID"
+                  [hint]="'Verhoeff checksum validated'"
                 />
               </div>
             </section>
             
-            <!-- Sub-Section B: 📧 Access Coordinates & Reach -->
+            <!-- Sub-Section B: 💼 Employment Details -->
             <section class="space-y-6">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
-                <i class="fa-solid fa-address-card text-indigo-400"></i> 2. Contact Coordinates
+                <i class="fa-solid fa-briefcase text-indigo-400"></i> 2. Employment Details
               </h4>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <dom-input
-                  [form_group]="form"
-                  [form_control]="'email'"
-                  [label]="'Email Address'"
-                  [placeholder]="'john@example.com'"
-                  [type]="'email'"
-                />
-
-                <dom-input
-                  [form_group]="form"
-                  [form_control]="'password'"
-                  [label]="'Secure Password'"
-                  [type]="'password'"
-                  [hint]="'Must be at least 8 characters'"
-                />
-
-                <!-- Custom Normalized Mobile Phone component -->
-                <div class="sm:col-span-2">
-                  <dom-mobile-number
-                    [form_group]="form"
-                    [form_control]="'mobile_phone'"
-                    label="Mobile Telephone Number"
-                  />
-                </div>
-
-                <div class="sm:col-span-2">
-                  <dom-datetime-picker
-                    [form_group]="form"
-                    [form_control]="'appointment'"
-                    label="Scheduled Consultation Slot"
-                    placeholder="Choose date &amp; time"
-                    format="iso"
-                    [hint]="'Stored format: YYYY-MM-DD HH:mm'"
-                  />
-                </div>
-              </div>
-            </section>
-
-            <!-- Sub-Section C: ⚙️ Custom Settings & Preferences -->
-            <section class="space-y-6">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
-                <i class="fa-solid fa-sliders text-indigo-400"></i> 3. Preferences &amp; Config Options
-              </h4>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <dom-input-number
-                  [form_group]="form"
-                  [form_control]="'price'"
-                  label="Budget Allocation"
-                  mode="decimal"
-                  [min]="0"
-                  [decimal_places]="2"
-                  placeholder="0.00"
-                />
-
-                <div class="flex flex-col gap-1 w-full">
-                  <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 select-none">Account State</label>
-                  <div class="h-[30px] flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md px-3 shadow-sm w-full">
-                    <dom-toggle
-                      [form_group]="form"
-                      [form_control]="'active'"
-                      label=""
-                      on_label="Active State"
-                      off_label="Inactive State"
-                    />
-                  </div>
-                </div>
-
                 <dom-single-select
-                  [form_group]="form"
-                  [form_control]="'country'"
-                  label="Country of Residence"
-                  [options]="countryOptions()"
-                  [id_property]="'code'"
-                  [title_property]="'title'"
-                  (on_change)="onCountryChange($event)"
+                  [form]="employeeForm"
+                  form_control="department"
+                  label="Department"
+                  placeholder="Select department"
+                  [options]="departmentOptions"
+                  id_property="value"
+                  title_property="label"
                 />
 
                 <dom-multi-select
-                  [form_group]="form"
-                  [form_control]="'language'"
-                  [label]="'Preferred Languages'"
-                  [options]="languageOptions"
-                  [id_property]="'code'"
-                  [title_property]="'name'"
-                  (on_change)="onLanguageChange($event)"
+                  [form]="employeeForm"
+                  form_control="skills"
+                  label="Technical Skills"
+                  placeholder="Select skills"
+                  [options]="skillOptions"
+                  id_property="value"
+                  title_property="label"
+                  [hint]="'Select at least one skill'"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <dom-date-picker
+                  [form]="employeeForm"
+                  form_control="joiningDate"
+                  format="date"
+                  label="Joining Date"
+                  placeholder="Select joining date"
+                  [hint]="'Cannot be in the future'"
                 />
 
-                <div class="sm:col-span-2">
-                  <dom-inputarea
-                    [form_group]="form"
-                    [form_control]="'description'"
-                    label="Brief Profile Biography"
-                    placeholder="Describe your profile here..."
-                    [rows]="3"
-                    [max_length]="300"
-                    hint="Biography allows up to 300 characters"
+                <dom-radio
+                  [form]="employeeForm"
+                  form_control="employmentType"
+                  label="Employment Type"
+                  [options]="employmentTypeOptions"
+                  [layout]="layout()"
+                />
+
+                @if (!employeeForm.contractEndDate().hidden()) {
+                  <dom-date-picker
+                    [form]="employeeForm"
+                    form_control="contractEndDate"
+                    format="date"
+                    label="Contract End Date"
+                    placeholder="Select end date"
+                    [hint]="'Contract limit: max 5 years'"
                   />
-                </div>
+                }
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <dom-checkbox
+                  [form]="employeeForm"
+                  form_control="isActive"
+                  label="Active Status"
+                />
               </div>
             </section>
 
-            <!-- Sub-Section D: 📐 Layout Orientations & Form Choices -->
+            <!-- Sub-Section C: 📍 Address Details (Nested Form) -->
             <section class="space-y-6">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
-                <i class="fa-solid fa-list-check text-indigo-400"></i> 4. Layout Radios &amp; Checkboxes
+                <i class="fa-solid fa-map-location-dot text-indigo-400"></i> 3. Address Coordinates
               </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <dom-radio
-                  [form_group]="form"
-                  [form_control]="'gender'"
-                  label="Gender Category"
-                  [layout]="layout()"
-                  [options]="genderOptions"
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <dom-input
+                  [form]="employeeForm.address"
+                  form_control="city"
+                  label="City"
+                  placeholder="City"
                 />
-                
-                <dom-checkbox
-                  [form_group]="form"
-                  [form_control]="'notifications'"
-                  label="Alert Notifications Subscriptions"
-                  [layout]="layout()"
-                  [options]="notificationOptions"
+
+                <dom-input
+                  [form]="employeeForm.address"
+                  form_control="state"
+                  label="State"
+                  placeholder="State"
+                />
+
+                <dom-input
+                  [form]="employeeForm.address"
+                  form_control="pincode"
+                  label="PIN Code"
+                  placeholder="6 digits"
                 />
               </div>
             </section>
 
-            <!-- Safety & Agreements -->
-            <section class="space-y-4">
+            <!-- Sub-Section D: 🚨 Emergency Contacts (Form Array) -->
+            <section class="space-y-6">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-2">
-                <i class="fa-solid fa-shield-halved text-indigo-400"></i> 5. Agreements &amp; Terms
+                <i class="fa-solid fa-people-group text-indigo-400"></i> 4. Emergency Contacts
               </h4>
-              <dom-checkbox
-                [form_group]="form"
-                [form_control]="'agree'"
-                label="I explicitly accept all Terms of Services and Safety Policies."
-              />
+
+              <div class="space-y-6">
+                @for (contactField of employeeForm.emergencyContacts; track contactField; let i = $index) {
+                  <div class="p-4 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/50 dark:border-slate-800/50 rounded-md relative">
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Contact #{{ i + 1 }}</span>
+                      
+                      @if (employeeModel().emergencyContacts.length > 1) {
+                        <button
+                          type="button"
+                          (click)="removeEmergencyContact(i)"
+                          class="text-xs font-semibold text-rose-500 hover:text-rose-700 flex items-center gap-1 transition cursor-pointer"
+                        >
+                          <i class="fa-solid fa-trash-can"></i> Remove
+                        </button>
+                      }
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <dom-input
+                        [form]="contactField"
+                        form_control="name"
+                        label="Contact Name"
+                        placeholder="Jane Doe"
+                      />
+
+                      <dom-input
+                        [form]="contactField"
+                        form_control="phone"
+                        label="Contact Phone"
+                        placeholder="9876543210"
+                      />
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <button
+                type="button"
+                (click)="addEmergencyContact()"
+                class="inline-flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer"
+              >
+                <i class="fa-solid fa-plus"></i> Add Emergency Contact
+              </button>
             </section>
 
             <!-- Submission Actions -->
             <div class="flex gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
               <button
-                type="button"
-                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-indigo-700 active:bg-indigo-800 shadow-md hover:shadow-lg transition cursor-pointer"
-                (click)="submit()"
+                type="submit"
+                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-indigo-700 active:bg-indigo-800 shadow-md hover:shadow-lg transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="employeeForm().invalid() || employeeForm().pending()"
               >
-                <i class="fa-solid fa-paper-plane"></i> Submit Form Schema
+                <i class="fa-solid fa-paper-plane"></i> Submit Employee Profile
               </button>
               <button
                 type="button"
@@ -301,7 +327,7 @@
                 <i class="fa-solid fa-rotate-left"></i> Reset Form
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -314,20 +340,20 @@
             </span>
             <span
               class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
-              [class.bg-emerald-50]="form.valid"
-              [class.text-emerald-700]="form.valid"
-              [class.dark:bg-emerald-950/40]="form.valid"
-              [class.dark:text-emerald-400]="form.valid"
-              [class.bg-rose-50]="!form.valid"
-              [class.text-rose-600]="!form.valid"
-              [class.dark:bg-rose-950/40]="!form.valid"
-              [class.dark:text-rose-400]="!form.valid"
+              [class.bg-emerald-50]="!employeeForm().invalid()"
+              [class.text-emerald-700]="!employeeForm().invalid()"
+              [class.dark:bg-emerald-950/40]="!employeeForm().invalid()"
+              [class.dark:text-emerald-400]="!employeeForm().invalid()"
+              [class.bg-rose-50]="employeeForm().invalid()"
+              [class.text-rose-600]="employeeForm().invalid()"
+              [class.dark:bg-rose-950/40]="employeeForm().invalid()"
+              [class.dark:text-rose-400]="employeeForm().invalid()"
             >
-              <i class="fa-solid" [class.fa-circle-check]="form.valid" [class.fa-circle-xmark]="!form.valid"></i>
-              {{ form.valid ? 'VALID' : 'INVALID' }}
+              <i class="fa-solid" [class.fa-circle-check]="!employeeForm().invalid()" [class.fa-circle-xmark]="employeeForm().invalid()"></i>
+              {{ !employeeForm().invalid() ? 'VALID' : 'INVALID' }}
             </span>
           </div>
-          <pre class="text-[10px] font-mono text-slate-600 dark:text-slate-300 p-4 overflow-auto max-h-[75vh] leading-relaxed bg-slate-50/30 dark:bg-slate-950/30">{{ form.value | json }}</pre>
+          <pre class="text-[10px] font-mono text-slate-600 dark:text-slate-300 p-4 overflow-auto max-h-[75vh] leading-relaxed bg-slate-50/30 dark:bg-slate-950/30">{{ employeeModel() | json }}</pre>
         </div>
       </div>
     </div>

@@ -54,13 +54,13 @@ export class DatePicker {
 
     simple:
 `// TypeScript
-this.simple_form = this.fb.group({
-  birthday: [null, Validators.required],
-});
+// Signal Forms definition
+const birthdayModel = signal(null);
+const form = form(birthdayModel, Validators.required);
 
 // Template
 <dom-date-picker
-  [form_group]="simple_form"
+  [form]="form"
   form_control="birthday"
   label="Date of birth"
   placeholder="Select date"
@@ -70,7 +70,7 @@ this.simple_form = this.fb.group({
 `// timestamp_field: [null]
 
 <dom-date-picker
-  [form_group]="form"
+  [form]="form"
   form_control="timestamp_field"
   label="Event date (Unix timestamp)"
   format="timestamp"
@@ -83,7 +83,7 @@ this.simple_form = this.fb.group({
 // minmax_field: [null, [Validators.required, domDateMin('2024-01-01'), domDateMax('2024-12-31')]]
 
 <dom-date-picker
-  [form_group]="form"
+  [form]="form"
   form_control="minmax_field"
   label="Event date"
   hint="Must be in 2024"
@@ -93,7 +93,7 @@ this.simple_form = this.fb.group({
 `// disabled_field: ['2024-06-15']   (pre-filled ISO date)
 
 <dom-date-picker
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_field"
   label="Contract start (read-only)"
   [is_disabled]="true"
@@ -101,7 +101,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-date-picker
-  [form_group]="form"
+  [form]="form"
   form_control="start_date"
   (on_change)="handleChange($event)"  <!-- emits formatted string | null -->
   (on_blur)="handleBlur($event)"
@@ -142,6 +142,12 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group',     type: 'FormGroup',       default_val: 'required',    description: 'Parent reactive form group.' },
     { name: 'form_control',   type: 'string',          default_val: 'required',    description: 'Key of the control inside the form group.' },
     { name: 'label',          type: 'string',          default_val: "''",          description: 'Field label above the picker.' },

@@ -9,10 +9,12 @@ import {
   ElementRef,
   HostListener,
   inject,
+  untracked,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 @Component({
   selector: 'dom-single-select',
@@ -25,10 +27,11 @@ import { DomErrorComponent } from '../dom-error/dom-error.component';
   templateUrl: './dom-input-single-select.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DomSingleSelectComponent<T extends Record<string, unknown>> {
+export class DomSingleSelectComponent<T extends Record<string, unknown>, F extends FormModel = FormModel> {
   // ── Inputs ──────────────────────────────────────────────────────────────────
-  readonly form_group = input.required<FormGroup>();
-  readonly form_control = input.required<string>();
+  readonly form = input<any>();
+  readonly form_group = input<FormGroup>();
+  readonly form_control = input.required<Extract<keyof F, string>>();
   readonly options = input.required<T[]>();
 
   readonly id_property = input<string>('id');
@@ -49,20 +52,37 @@ export class DomSingleSelectComponent<T extends Record<string, unknown>> {
 
   private readonly elementRef = inject(ElementRef);
 
-  readonly control = computed(
-    () => this.form_group()?.controls[this.form_control()] as FormControl,
-  );
-  readonly is_required = computed(() =>
-    this.form_group()?.controls[this.form_control()]?.hasValidator(Validators.required),
-  );
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
+  });
+
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
+
+  readonly currentValue = computed(() => {
+    const f = this.field();
+    if (f) return f.value();
+    return this.legacyControl()?.value;
+  });
 
   readonly hasValue = computed(() => {
-    const value = this.control()?.value;
+    const value = this.currentValue();
     return value !== null && value !== undefined && value !== '';
   });
 
   readonly selectedTitle = computed(() => {
-    const val = this.control()?.value;
+    const val = this.currentValue();
     if (val === null || val === undefined || val === '') return '';
     const selected = this.dynamic_options().find((opt) => opt[this.id_property()] === val);
     return selected ? String(selected[this.title_property()]) : '';
@@ -83,12 +103,33 @@ export class DomSingleSelectComponent<T extends Record<string, unknown>> {
 
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      if (this.is_disabled()) {
-        ctrl.disable({ emitEvent: false });
-      } else {
-        ctrl.enable({ emitEvent: false });
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        untracked(() => {
+          this.on_change.emit(val);
+        });
+      }
+    });
+
+    effect(() => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        const val = ctrl.value;
+        untracked(() => {
+          this.on_change.emit(val);
+        });
+      }
+    });
+
+    effect(() => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
       }
     });
 
@@ -121,8 +162,19 @@ export class DomSingleSelectComponent<T extends Record<string, unknown>> {
   selectOption(option: T): void {
     if (this.is_disabled()) return;
     const value = option[this.id_property()];
-    this.control().setValue(value);
-    this.control().markAsTouched();
+    const f = this.field();
+    if (f) {
+      f.value.set(value as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(value);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
     this.on_change.emit(option);
     this.panelOpen.set(false);
     this.searchQuery.set('');
@@ -132,8 +184,19 @@ export class DomSingleSelectComponent<T extends Record<string, unknown>> {
     event.stopPropagation();
     event.preventDefault();
     if (this.is_disabled()) return;
-    this.control().setValue(null);
-    this.control().markAsTouched();
+    const f = this.field();
+    if (f) {
+      f.value.set(null as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(null);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
     this.on_change.emit(null);
     this.panelOpen.set(false);
     this.searchQuery.set('');

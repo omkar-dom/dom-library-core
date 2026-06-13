@@ -1,10 +1,37 @@
 {
   "name": "dom-library-core",
-  "version": "1.1.0",
+  "version": "2.0.2",
+  "description": "An enterprise-grade, zero-dependency suite of premium standalone form controls built natively for Angular 22, Angular Signal Forms (@angular/forms/signals), and Zoneless Change Detection.",
+  "keywords": [
+    "angular 22",
+    "angular 22 signal forms",
+    "signal forms",
+    "forms signals",
+    "angular signals",
+    "zoneless angular",
+    "standalone controls",
+    "tailwind forms",
+    "form validation",
+    "date picker",
+    "multi-select",
+    "dom library",
+    "custom form controls",
+    "angular components"
+  ],
+  "author": "Omkar Dandavate",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dandavate-omkar/dom-library-core.git"
+  },
+  "homepage": "https://github.com/dandavate-omkar/dom-library-core#readme",
+  "bugs": {
+    "url": "https://github.com/dandavate-omkar/dom-library-core/issues"
+  },
   "peerDependencies": {
-    "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0",
-    "@angular/forms": "^21.2.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
     "moment": "^2.30.1"
   },
   "dependencies": {

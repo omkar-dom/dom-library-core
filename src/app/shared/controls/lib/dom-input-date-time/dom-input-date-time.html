@@ -19,7 +19,7 @@
         [min]="htmlMinDate() ?? ''"
         [max]="htmlMaxDate() ?? ''"
         (input)="onHtmlDateChange($event)"
-        (blur)="on_blur.emit(control().value)"
+        (blur)="onBlur()"
         class="flex-1 border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 h-[30px]"
       />
       <input
@@ -27,7 +27,7 @@
         [value]="pickerTime()"
         [disabled]="is_disabled() || is_readonly()"
         (input)="onTimeInput($event)"
-        (blur)="on_blur.emit(control().value)"
+        (blur)="onBlur()"
         class="w-32 shrink-0 border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 h-[30px]"
       />
     </div>
@@ -36,8 +36,10 @@
       <p class="text-[11px] text-slate-400 mt-1 select-none">{{ hint() }}</p>
     }
 
-    @if (control().invalid && control().touched) {
-      <dom-error class="mt-1" [control]="control()" />
+    @if (form()) {
+      <dom-error class="mt-1" [field]="field()" />
+    } @else if (form_group()) {
+      <dom-error class="mt-1" [control]="legacyControl()" />
     }
   </div>
 </div>

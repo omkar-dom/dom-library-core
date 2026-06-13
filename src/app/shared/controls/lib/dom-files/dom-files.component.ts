@@ -1,33 +1,34 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   effect,
-  inject,
   input,
   output,
   signal,
   ViewChild,
   ElementRef,
+  untracked,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 @Component({
   selector: 'dom-files',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, DomErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, DomErrorComponent],
   templateUrl: './dom-files.component.html',
 })
-export class DomFilesComponent {
+export class DomFilesComponent<T extends FormModel = FormModel> {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
-  readonly form_group    = input<FormGroup>();
-  readonly form_control  = input<FormControl>();
-  readonly control_name  = input<string>();
+  readonly form = input<any>();
+  readonly form_group = input<FormGroup>();
+  readonly form_control = input<any>();
+  readonly control_name = input<string>('');
   readonly label         = input<string>('');
   readonly placeholder   = input<string>('');
   readonly hint          = input<string>();
@@ -51,30 +52,112 @@ export class DomFilesComponent {
     this.selected_files().filter((f) => !f.type.startsWith('image/')),
   );
 
-  readonly control = computed<FormControl>(
-    () =>
-      this.form_control() ??
-      (this.form_group()?.get(this.control_name()!) as FormControl),
-  );
+  readonly legacyControl = computed(() => {
+    const fc = this.form_control();
+    if (fc instanceof FormControl) {
+      return fc;
+    }
+    const group = this.form_group();
+    if (group) {
+      if (typeof fc === 'string' && fc) {
+        return group.get(fc) as FormControl;
+      }
+      const name = this.control_name();
+      if (name) {
+        return group.get(name) as FormControl;
+      }
+    }
+    return undefined;
+  });
 
-  private readonly destroyRef = inject(DestroyRef);
+  readonly controlNameKey = computed(() => {
+    const fc = this.form_control();
+    if (typeof fc === 'string' && fc) {
+      return fc as Extract<keyof T, string>;
+    }
+    const name = this.control_name();
+    if (name) {
+      return name as Extract<keyof T, string>;
+    }
+    return undefined;
+  });
+
+  protected readonly resolvedFormField = resolveFormField(this.form, this.controlNameKey as any) as any;
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
 
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      this.is_disabled()
-        ? ctrl.disable({ emitEvent: false })
-        : ctrl.enable({ emitEvent: false });
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        untracked(() => {
+          this.syncFilesFromValue(val);
+          this.on_change.emit(val);
+        });
+      }
     });
 
-    effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      ctrl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((val) => this.on_change.emit(val));
+    effect((onCleanup) => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        const val = ctrl.value;
+        untracked(() => {
+          this.syncFilesFromValue(val);
+          this.on_change.emit(val);
+        });
+
+        const sub = ctrl.valueChanges.subscribe(v => {
+          this.syncFilesFromValue(v);
+          this.on_change.emit(v);
+        });
+
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
+
+        onCleanup(() => sub.unsubscribe());
+      }
     });
+  }
+
+  private syncFilesFromValue(val: any): void {
+    if (Array.isArray(val)) {
+      this.selected_files.set(val);
+      // Generate previews
+      const urls: string[] = [];
+      val.forEach((file: any) => {
+        if (file instanceof File && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const all = [...this.preview_urls()];
+            const idx = this.selected_files().indexOf(file);
+            if (idx > -1) {
+              all[idx] = e.target?.result as string;
+              this.preview_urls.set(all);
+            }
+          };
+          reader.readAsDataURL(file);
+          urls.push('');
+        } else {
+          urls.push('');
+        }
+      });
+      this.preview_urls.set(urls);
+    } else {
+      this.selected_files.set([]);
+      this.preview_urls.set([]);
+    }
   }
 
   onDragOver(event: DragEvent): void {
@@ -141,7 +224,19 @@ export class DomFilesComponent {
       this.preview_urls.set(urls);
     }
 
-    this.control().setValue(updated);
+    const f = this.field();
+    if (f) {
+      f.value.set(updated as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(updated);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
     this.on_change.emit(updated);
   }
 
@@ -163,7 +258,20 @@ export class DomFilesComponent {
     urls.splice(index, 1);
     this.selected_files.set(files);
     this.preview_urls.set(urls);
-    this.control().setValue(files);
+    
+    const f = this.field();
+    if (f) {
+      f.value.set(files as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(files);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
     this.on_change.emit(files);
   }
 

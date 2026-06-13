@@ -48,7 +48,7 @@ this.form = this.fb.group({
 
 // HTML Default Usage
 <dom-name-buddy
-  [form_group]="form"
+  [form]="form"
   salutation_control="salutation"
   first_name_control="first_name"
   middle_name_control="middle_name"
@@ -56,7 +56,7 @@ this.form = this.fb.group({
 />`,
     compact: `<!-- Hiding Salutation and Middle Name -->
 <dom-name-buddy
-  [form_group]="form"
+  [form]="form"
   first_name_control="first_name"
   last_name_control="last_name"
   [hide_salutation]="true"
@@ -65,6 +65,12 @@ this.form = this.fb.group({
   };
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group', type: 'FormGroup', default_val: 'required', description: 'Parent form group containing the name controls.' },
     { name: 'first_name_control', type: 'string', default_val: 'required', description: 'String key matching First Name control.' },
     { name: 'last_name_control', type: 'string', default_val: 'required', description: 'String key matching Last Name control.' },

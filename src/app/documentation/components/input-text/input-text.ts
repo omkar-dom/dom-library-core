@@ -54,13 +54,13 @@ export class InputText {
     import: `import { DomInputComponent } from 'dom-library-core';`,
 
     simple: `// TypeScript
-this.simple_form = this.fb.group({
-  name: ['', Validators.required],
-});
+// Signal Forms definition
+const nameModel = signal('');
+const form = form(nameModel, Validators.required);
 
 // Template
 <dom-input
-  [form_group]="simple_form"
+  [form]="form"
   form_control="name"
   label="Full name"
   placeholder="Enter your full name"
@@ -69,7 +69,7 @@ this.simple_form = this.fb.group({
     text_max: `// max_field: ['', Validators.maxLength(10)]
 
 <dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="max_field"
   label="Short code"
   placeholder="Up to 10 characters"
@@ -82,7 +82,7 @@ this.simple_form = this.fb.group({
 // when type="email", so the explicit one is optional.
 
 <dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="email_field"
   label="Email address"
   placeholder="you@example.com"
@@ -92,7 +92,7 @@ this.simple_form = this.fb.group({
     password: `// password_field: ['', [Validators.required, Validators.minLength(8)]]
 
 <dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="password_field"
   label="Password"
   placeholder="Min 8 characters"
@@ -103,7 +103,7 @@ this.simple_form = this.fb.group({
     readonly: `// readonly_field: ['Pre-filled read-only value']
 
 <dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="readonly_field"
   label="Reference ID"
   [is_readonly]="true"
@@ -112,7 +112,7 @@ this.simple_form = this.fb.group({
     hint: `// hint_field: ['']
 
 <dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Username"
   placeholder="e.g. john_doe"
@@ -120,7 +120,7 @@ this.simple_form = this.fb.group({
 />`,
 
     outputs: `<dom-input
-  [form_group]="form"
+  [form]="form"
   form_control="email"
   (on_change)="handleChange($event)"
   (on_blur)="handleBlur($event)"
@@ -194,10 +194,16 @@ this.simple_form = this.fb.group({
 
   readonly api_inputs = [
     {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    {
       name: 'form_group',
       type: 'FormGroup',
       default_val: 'required',
-      description: 'Parent reactive form group that owns the control.',
+      description: 'Parent reactive form group (legacy fallback mode).',
     },
     {
       name: 'form_control',

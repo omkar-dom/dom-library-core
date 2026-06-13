@@ -13,11 +13,13 @@
       <label class="inline-flex items-center gap-2 cursor-pointer select-none">
         <input
           type="radio"
-          [formControl]="control()"
+          [name]="form_control()"
           [value]="opt.value"
+          [checked]="currentValue() === opt.value"
+          (change)="onRadioChange(opt.value)"
           [disabled]="opt.disabled ?? false"
           class="border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          (blur)="on_blur.emit(control().value)"
+          (blur)="onBlur()"
         />
         <span class="text-sm text-slate-700" [class.text-slate-400]="opt.disabled">
           {{ opt.label }}
@@ -30,7 +32,9 @@
     <p class="text-[11px] text-slate-400 mt-0.5 select-none">{{ hint() }}</p>
   }
 
-  @if (control().invalid && control().touched) {
-    <dom-error class="mt-1" [control]="control()"/>
+  @if (form()) {
+    <dom-error class="mt-1" [field]="field()" />
+  } @else if (form_group()) {
+    <dom-error class="mt-1" [control]="legacyControl()" />
   }
 </div>

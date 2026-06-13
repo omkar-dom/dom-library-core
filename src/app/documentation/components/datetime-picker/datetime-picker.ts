@@ -54,13 +54,13 @@ export class DateTimePicker {
 
     simple:
 `// TypeScript
-this.simple_form = this.fb.group({
-  appointment: [null, Validators.required],
-});
+// Signal Forms definition
+const appointmentModel = signal(null);
+const form = form(appointmentModel, Validators.required);
 
 // Template
 <dom-datetime-picker
-  [form_group]="simple_form"
+  [form]="form"
   form_control="appointment"
   label="Appointment date & time"
   placeholder="Select date"
@@ -71,7 +71,7 @@ this.simple_form = this.fb.group({
 `// readonly_field: ['2025-01-15 09:30']
 
 <dom-datetime-picker
-  [form_group]="form"
+  [form]="form"
   form_control="readonly_field"
   label="Scheduled at (read-only)"
   [is_readonly]="true"
@@ -86,7 +86,7 @@ this.simple_form = this.fb.group({
 // ]]
 
 <dom-datetime-picker
-  [form_group]="form"
+  [form]="form"
   form_control="minmax_field"
   label="Schedule within 2025"
   hint="Pick any slot in the current year"
@@ -94,7 +94,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-datetime-picker
-  [form_group]="form"
+  [form]="form"
   form_control="appointment"
   (on_change)="handleChange($event)"  <!-- emits "YYYY-MM-DD HH:mm" or null -->
   (on_blur)="handleBlur($event)"
@@ -129,6 +129,12 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group',    type: 'FormGroup',      default_val: 'required',  description: 'Parent reactive form group.' },
     { name: 'form_control',  type: 'string',         default_val: 'required',  description: 'Key of the control inside the form group.' },
     { name: 'label',         type: 'string',         default_val: "''",        description: 'Field label above the picker.' },

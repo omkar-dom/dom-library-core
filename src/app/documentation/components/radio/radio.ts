@@ -83,13 +83,13 @@ readonly priority_options: RadioOption[] = [
   { label: 'Medium', value: 'medium' },
   { label: 'High',   value: 'high'   },
 ];
-this.simple_form = this.fb.group({
-  priority: [null, Validators.required],
-});
+// Signal Forms definition
+const priorityModel = signal(null);
+const form = form(priorityModel, Validators.required);
 
 // Template
 <dom-radio
-  [form_group]="simple_form"
+  [form]="form"
   form_control="priority"
   label="Priority"
   [options]="priority_options"
@@ -104,7 +104,7 @@ this.simple_form = this.fb.group({
 // horizontal_field: [null]
 
 <dom-radio
-  [form_group]="form"
+  [form]="form"
   form_control="horizontal_field"
   label="Size"
   [options]="size_options"
@@ -120,7 +120,7 @@ this.simple_form = this.fb.group({
 // disabled_opt_field: [null, Validators.required]
 
 <dom-radio
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_opt_field"
   label="Status"
   [options]="status_options"
@@ -134,7 +134,7 @@ this.simple_form = this.fb.group({
 // hint_field: [null]
 
 <dom-radio
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Billing cycle"
   hint="Annual billing saves 20%"
@@ -144,7 +144,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-radio
-  [form_group]="form"
+  [form]="form"
   form_control="category"
   [options]="category_options"
   (on_change)="handleChange($event)"
@@ -185,7 +185,13 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
-    { name: 'form_group',   type: 'FormGroup',                 default_val: 'required',   description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',   type: 'FormGroup',                 default_val: 'required',   description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control', type: 'string',                    default_val: 'required',   description: 'Key of the control inside the form group.' },
     { name: 'label',        type: 'string',                    default_val: "''",         description: 'Group label displayed above the radio options.' },
     { name: 'placeholder',  type: 'string',                    default_val: "''",         description: 'Unused visually; reserved for form schema consistency.' },

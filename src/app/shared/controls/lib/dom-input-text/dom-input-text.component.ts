@@ -1,27 +1,34 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   effect,
-  inject,
   input,
   output,
   signal,
+  untracked,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FieldTree, FormField } from '@angular/forms/signals';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
+
 @Component({
   selector: 'dom-input',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, DomErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, DomErrorComponent, FormField],
   templateUrl: './dom-input-text.component.html',
 })
-export class DomInputComponent {
-  readonly form_group           = input.required<FormGroup>();
-  readonly form_control         = input.required<string>();
+export class DomInputComponent<T extends FormModel = FormModel> {
+  @ViewChild('inputEl') inputEl?: ElementRef<HTMLInputElement>;
+
+  readonly form                 = input<FieldTree<T>>();
+  readonly form_group            = input<FormGroup>();
+  readonly form_control         = input.required<Extract<keyof T, string>>();
   readonly label                = input<string>('');
   readonly placeholder          = input<string>('');
   readonly hint                 = input<string>();
@@ -35,37 +42,58 @@ export class DomInputComponent {
   readonly on_blur   = output<any>();
 
   readonly show_pass = signal(false);
-  readonly is_required = computed(() => this.control().hasValidator(Validators.required));
 
-  readonly control = computed<FormControl>(
-    () =>
-      this.form_group().get(this.form_control()) as FormControl ??
-      this.form_group().get(this.form_control()!) as FormControl,
-  );
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
+  });
 
-  private readonly destroyRef = inject(DestroyRef);
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
 
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      if(this.is_disabled()) {
-        ctrl.disable({ emitEvent: false });
-      } else {
-        ctrl.enable({ emitEvent: false });
-      }
-
-      if (this.type() === 'email') {
-        ctrl.addValidators(Validators.email);
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        untracked(() => {
+          this.on_change.emit(val);
+        });
       }
     });
 
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      ctrl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((val) => this.on_change.emit(val));
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
+      }
+    });
+
+    effect(() => {
+      const el = this.inputEl?.nativeElement;
+      if (el) {
+        const maxLengthVal = this.max_length();
+        if (maxLengthVal !== undefined && maxLengthVal !== null) {
+          el.maxLength = maxLengthVal;
+        } else {
+          el.removeAttribute('maxlength');
+        }
+        el.readOnly = this.is_readonly();
+      }
     });
   }
 }

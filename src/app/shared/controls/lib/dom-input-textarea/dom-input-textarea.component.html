@@ -9,22 +9,34 @@
   }
 
   <div class="relative flex flex-col">
-    <textarea
-      [placeholder]="placeholder()"
-      [formControl]="control()"
-      [rows]="rows()"
-      [attr.maxlength]="max_length() ?? null"
-      [readonly]="is_readonly()"
-      (blur)="on_blur.emit(control().value)"
-      class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 resize-y"
-    ></textarea>
+    @if (form()) {
+      <textarea
+        [placeholder]="placeholder()"
+        [formField]="$any(resolvedFormField())"
+        [rows]="rows()"
+        (blur)="field()?.markAsTouched(); on_blur.emit(field()?.value())"
+        class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 resize-y"
+      ></textarea>
+    } @else if (form_group()) {
+      <textarea
+        [placeholder]="placeholder()"
+        [formControl]="legacyControl()"
+        [rows]="rows()"
+        [readonly]="is_readonly()"
+        [attr.maxlength]="max_length() ?? null"
+        (blur)="legacyControl().markAsTouched(); on_blur.emit(legacyControl().value)"
+        class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 resize-y"
+      ></textarea>
+    }
 
     @if (hint()) {
       <p class="text-[11px] text-slate-400 mt-1 select-none">{{ hint() }}</p>
     }
 
-    @if (control().invalid && control().touched) {
-      <dom-error class="mt-1" [control]="control()" />
+    @if (form()) {
+      <dom-error class="mt-1" [field]="field()" />
+    } @else if (form_group()) {
+      <dom-error class="mt-1" [control]="legacyControl()" />
     }
   </div>
 </div>

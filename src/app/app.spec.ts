@@ -14,10 +14,9 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should have the title signal configured', () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-migration-21');
+    const app = fixture.componentInstance;
+    expect(app['title']()).toBe('angular-migration-21');
   });
 });

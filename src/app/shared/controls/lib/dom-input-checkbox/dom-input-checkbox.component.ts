@@ -1,17 +1,18 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   effect,
-  inject,
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FieldTree, FormField } from '@angular/forms/signals';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 export interface CheckboxOption {
   id:    string;
@@ -23,12 +24,13 @@ export interface CheckboxOption {
   selector: 'dom-checkbox',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, DomErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, DomErrorComponent, FormField],
   templateUrl: './dom-input-checkbox.component.html',
 })
-export class DomCheckboxComponent {
-  readonly form_group      = input.required<FormGroup>();
-  readonly form_control    = input.required<string>();
+export class DomCheckboxComponent<T extends FormModel = FormModel> {
+  readonly form            = input<FieldTree<T>>();
+  readonly form_group      = input<FormGroup>();
+  readonly form_control    = input.required<Extract<keyof T, string>>();
   readonly label           = input<string>('');
   readonly placeholder     = input<string>('');
   readonly hint            = input<string>();
@@ -43,40 +45,63 @@ export class DomCheckboxComponent {
   readonly on_blur   = output<any>();
 
   readonly checked_values = signal<any[]>([]);
-  readonly is_required = computed(() => this.control().hasValidator(Validators.required));
 
-  readonly control = computed<FormControl>(
-    () =>
-      this.form_group().get(this.form_control()) as FormControl ??
-      this.form_group().get(this.form_control()!) as FormControl,
-  );
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
+  });
 
-  private readonly destroyRef = inject(DestroyRef);
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
 
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      this.is_disabled()
-        ? ctrl.disable({ emitEvent: false })
-        : ctrl.enable({ emitEvent: false });
-    });
-
-    effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      const current = ctrl.value;
-      if (Array.isArray(current)) {
-        this.checked_values.set(current);
-      }
-      ctrl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((val) => {
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        untracked(() => {
           if (Array.isArray(val)) {
             this.checked_values.set(val);
           }
           this.on_change.emit(val);
         });
+      }
+    });
+
+    effect((onCleanup) => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        // Init value
+        const val = ctrl.value;
+        if (Array.isArray(val)) {
+          this.checked_values.set(val);
+        }
+
+        const sub = ctrl.valueChanges.subscribe(v => {
+          if (Array.isArray(v)) {
+            this.checked_values.set(v);
+          }
+          this.on_change.emit(v);
+        });
+
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
+
+        onCleanup(() => sub.unsubscribe());
+      }
     });
   }
 
@@ -85,6 +110,7 @@ export class DomCheckboxComponent {
   }
 
   toggle(val: any): void {
+    if (this.is_disabled()) return;
     const current = [...this.checked_values()];
     const idx = current.indexOf(val);
     if (idx > -1) {
@@ -93,7 +119,20 @@ export class DomCheckboxComponent {
       current.push(val);
     }
     this.checked_values.set(current);
-    this.control().setValue(current);
+
+    const f = this.field();
+    if (f) {
+      f.value.set(current as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(current);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
     this.on_change.emit(current);
   }
 }

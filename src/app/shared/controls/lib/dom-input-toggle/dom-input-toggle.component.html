@@ -10,23 +10,33 @@
 
   <div class="flex items-center min-h-[30px]">
     <label class="relative inline-flex items-center cursor-pointer select-none">
-      <input
-        type="checkbox"
-        [formControl]="control()"
-        [id]="'toggle-' + form_control()"
-        [disabled]="is_disabled()"
-        class="sr-only peer"
-      />
+      @if (form()) {
+        <input
+          type="checkbox"
+          [formField]="$any(resolvedFormField())"
+          [id]="'toggle-' + form_control()"
+          class="sr-only peer"
+        />
+      } @else if (form_group()) {
+        <input
+          type="checkbox"
+          [formControl]="legacyControl()"
+          [id]="'toggle-' + form_control()"
+          class="sr-only peer"
+        />
+      }
       <div
         class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 transition-colors duration-200 peer-disabled:opacity-50"
       ></div>
       <span class="ml-2 text-xs font-medium text-slate-600 peer-disabled:text-slate-400">
-        {{ control().value ? on_label() : off_label() }}
+        {{ currentValue() ? on_label() : off_label() }}
       </span>
     </label>
   </div>
 
-  @if (control().invalid && control().touched) {
-    <dom-error class="mt-1" [control]="control()" />
+  @if (form()) {
+    <dom-error class="mt-1" [field]="field()" />
+  } @else if (form_group()) {
+    <dom-error class="mt-1" [control]="legacyControl()" />
   }
 </div>

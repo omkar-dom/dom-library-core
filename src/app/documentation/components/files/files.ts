@@ -54,14 +54,14 @@ export class Files {
 
     single:
 `// TypeScript — using form_group + control_name
-this.simple_form = this.fb.group({
-  document: [null],
-});
+// Signal Forms definition
+const documentModel = signal(null);
+const form = form(documentModel);
 
 // Template
 <dom-files
-  [form_group]="simple_form"
-  control_name="document"
+  [form]="form"
+  form_control="document"
   label="Attach document"
   hint="PDF or Word, max 5 MB"
   accept=".pdf,.doc,.docx"
@@ -114,8 +114,8 @@ readonly upload_ctrl = new FormControl(null);
 
     outputs:
 `<dom-files
-  [form_group]="form"
-  control_name="attachments"
+  [form]="form"
+  form_control="attachments"
   (on_change)="handleFiles($event)"   <!-- emits File[] -->
   (on_blur)="handleBlur($event)"
 />`,
@@ -155,6 +155,12 @@ readonly upload_ctrl = new FormControl(null);
   ];
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group',   type: 'FormGroup',   default_val: '—',       description: 'Parent form group. Use with control_name to locate the control.' },
     { name: 'form_control', type: 'FormControl', default_val: '—',       description: 'Direct FormControl reference. Takes precedence over form_group + control_name.' },
     { name: 'control_name', type: 'string',      default_val: '—',       description: 'Key used to look up the control inside form_group.' },

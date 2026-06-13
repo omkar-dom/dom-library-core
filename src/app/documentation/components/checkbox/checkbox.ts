@@ -75,13 +75,13 @@ export class Checkbox {
 
     single:
 `// TypeScript
-this.simple_form = this.fb.group({
-  accept: [false, Validators.requiredTrue],
-});
+// Signal Forms definition
+const acceptModel = signal(false);
+const form = form(acceptModel, Validators.requiredTrue);
 
 // Template
 <dom-checkbox
-  [form_group]="simple_form"
+  [form]="form"
   form_control="accept"
   label="I accept the terms and conditions"
 />`,
@@ -95,7 +95,7 @@ this.simple_form = this.fb.group({
 // multi_vertical: [[], Validators.required]
 
 <dom-checkbox
-  [form_group]="form"
+  [form]="form"
   form_control="multi_vertical"
   label="Favourite fruits"
   [options]="fruit_options"
@@ -111,7 +111,7 @@ this.simple_form = this.fb.group({
 // multi_horizontal: [[]]
 
 <dom-checkbox
-  [form_group]="form"
+  [form]="form"
   form_control="multi_horizontal"
   label="Preferred colours"
   [options]="color_options"
@@ -122,7 +122,7 @@ this.simple_form = this.fb.group({
 `// disabled_field: [{ value: ['opt1'], disabled: true }]
 
 <dom-checkbox
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_field"
   label="Options (disabled)"
   [options]="disabled_options"
@@ -131,7 +131,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-checkbox
-  [form_group]="form"
+  [form]="form"
   form_control="categories"
   [options]="category_options"
   (on_change)="handleChange($event)"
@@ -172,7 +172,13 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
-    { name: 'form_group',    type: 'FormGroup',                    default_val: 'required', description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',    type: 'FormGroup',                    default_val: 'required', description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control',  type: 'string',                       default_val: 'required', description: 'Key of the control inside the form group.' },
     { name: 'label',         type: 'string',                       default_val: "''",       description: 'Group label displayed above the checkbox options.' },
     { name: 'placeholder',   type: 'string',                       default_val: "''",       description: 'Unused visually; reserved for form schema consistency.' },

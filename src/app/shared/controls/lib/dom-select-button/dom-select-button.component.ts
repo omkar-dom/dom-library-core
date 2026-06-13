@@ -1,8 +1,8 @@
-import { Component, input, output, computed, inject, DestroyRef, effect } from '@angular/core';
+import { Component, input, output, computed, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomErrorComponent } from '../dom-error/dom-error.component';
+import { resolveFormField, FormModel } from '../form-control.utils';
 
 export interface SelectButtonOption {
   label: string;
@@ -18,9 +18,10 @@ export interface SelectButtonOption {
   templateUrl: './dom-select-button.component.html',
   styleUrl: './dom-select-button.component.css',
 })
-export class DomSelectButtonComponent {
-  readonly form_group = input.required<FormGroup>();
-  readonly form_control = input.required<string>();
+export class DomSelectButtonComponent<T extends FormModel = FormModel> {
+  readonly form = input<any>();
+  readonly form_group = input<FormGroup>();
+  readonly form_control = input.required<Extract<keyof T, string>>();
   readonly options = input.required<SelectButtonOption[]>();
   readonly multiple = input<boolean>(false);
   readonly label = input<string>('');
@@ -29,41 +30,68 @@ export class DomSelectButtonComponent {
 
   readonly on_change = output<any>();
 
-  readonly control = computed<FormControl>(
-    () => this.form_group().get(this.form_control()) as FormControl
-  );
-
-  readonly is_required = computed(() => {
-    const ctrl = this.control();
-    return ctrl ? ctrl.hasValidator(Validators.required) : false;
+  readonly legacyControl = computed(() => {
+    const group = this.form_group();
+    const ctrlName = this.form_control() as string;
+    return group?.get(ctrlName) as FormControl;
   });
 
-  private readonly destroyRef = inject(DestroyRef);
+  protected readonly resolvedFormField = resolveFormField(this.form, this.form_control);
+  protected readonly field = computed(() => {
+    const resolved = this.resolvedFormField();
+    return resolved ? resolved() : undefined;
+  });
+
+  readonly is_required = computed(() => {
+    const f = this.field();
+    if (f) return f.required();
+    return this.legacyControl()?.hasValidator(Validators.required) ?? false;
+  });
+
+  readonly currentValue = computed(() => {
+    const f = this.field();
+    if (f) return f.value();
+    return this.legacyControl()?.value;
+  });
 
   constructor() {
     effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      if (this.is_disabled()) {
-        ctrl.disable({ emitEvent: false });
-      } else {
-        ctrl.enable({ emitEvent: false });
+      const f = this.field();
+      if (f) {
+        const val = f.value();
+        untracked(() => {
+          this.on_change.emit(val);
+        });
       }
     });
 
-    effect(() => {
-      const ctrl = this.control();
-      if (!ctrl) return;
-      ctrl.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((val) => this.on_change.emit(val));
+    effect((onCleanup) => {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        const val = ctrl.value;
+        untracked(() => {
+          this.on_change.emit(val);
+        });
+
+        const sub = ctrl.valueChanges.subscribe(v => {
+          this.on_change.emit(v);
+        });
+
+        if (this.is_disabled()) {
+          ctrl.disable({ emitEvent: false });
+        } else {
+          ctrl.enable({ emitEvent: false });
+        }
+
+        onCleanup(() => sub.unsubscribe());
+      }
     });
   }
 
   isSelected(optionValue: any): boolean {
-    const currentValue = this.control()?.value;
+    const currentValue = this.currentValue();
     if (this.multiple()) {
-      return Array.isArray(currentValue) && currentValue.includes(optionValue);
+      return Array.isArray(currentValue) && (currentValue as any[]).includes(optionValue);
     }
     return currentValue === optionValue;
   }
@@ -71,30 +99,38 @@ export class DomSelectButtonComponent {
   selectOption(option: SelectButtonOption): void {
     if (this.is_disabled() || option.disabled) return;
 
-    const ctrl = this.control();
-    if (!ctrl) return;
-
-    const currentValue = ctrl.value;
+    const currentValue = this.currentValue();
+    let newValue: any;
 
     if (this.multiple()) {
-      let newValue: any[] = Array.isArray(currentValue) ? [...currentValue] : [];
-      if (newValue.includes(option.value)) {
-        newValue = newValue.filter((v) => v !== option.value);
+      let tempArray: any[] = Array.isArray(currentValue) ? [...currentValue] : [];
+      if (tempArray.includes(option.value)) {
+        tempArray = tempArray.filter((v) => v !== option.value);
       } else {
-        newValue.push(option.value);
+        tempArray.push(option.value);
       }
-      ctrl.setValue(newValue);
-      ctrl.markAsDirty();
-      ctrl.markAsTouched();
+      newValue = tempArray;
     } else {
       if (currentValue === option.value) {
-        // Toggle off if already selected
-        ctrl.setValue(null);
+        newValue = null;
       } else {
-        ctrl.setValue(option.value);
+        newValue = option.value;
       }
-      ctrl.markAsDirty();
-      ctrl.markAsTouched();
     }
+
+    const f = this.field();
+    if (f) {
+      f.value.set(newValue as any);
+      f.markAsDirty();
+      f.markAsTouched();
+    } else {
+      const ctrl = this.legacyControl();
+      if (ctrl) {
+        ctrl.setValue(newValue);
+        ctrl.markAsDirty();
+        ctrl.markAsTouched();
+      }
+    }
+    this.on_change.emit(newValue);
   }
 }

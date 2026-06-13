@@ -9,25 +9,40 @@
   }
 
   <div class="relative flex flex-col">
-    <input
-      type="number"
-      [placeholder]="placeholder()"
-      [formControl]="control()"
-      [attr.min]="min() ?? null"
-      [attr.max]="max() ?? null"
-      [attr.step]="step()"
-      [inputMode]="mode() === 'decimal' ? 'decimal' : 'numeric'"
-      [readonly]="is_readonly()"
-      (blur)="onBlur()"
-      class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 text-right"
-    />
+    @if (form()) {
+      <input
+        #inputEl
+        type="number"
+        [placeholder]="placeholder()"
+        [formField]="$any(resolvedFormField())"
+        [attr.step]="step()"
+        [inputMode]="mode() === 'decimal' ? 'decimal' : 'numeric'"
+        (blur)="onBlur()"
+        class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 text-right"
+      />
+    } @else if (form_group()) {
+      <input
+        type="number"
+        [placeholder]="placeholder()"
+        [formControl]="legacyControl()"
+        [attr.step]="step()"
+        [attr.min]="min() ?? null"
+        [attr.max]="max() ?? null"
+        [readonly]="is_readonly()"
+        [inputMode]="mode() === 'decimal' ? 'decimal' : 'numeric'"
+        (blur)="onBlur()"
+        class="w-full border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-md px-2 py-1 text-sm outline-none transition-colors disabled:opacity-50 disabled:bg-slate-50 text-right"
+      />
+    }
 
     @if (hint()) {
       <p class="text-[11px] text-slate-400 mt-1 select-none">{{ hint() }}</p>
     }
 
-    @if (control().invalid && control().touched) {
-      <dom-error class="mt-1" [control]="control()" />
+    @if (form()) {
+      <dom-error class="mt-1" [field]="field()" />
+    } @else if (form_group()) {
+      <dom-error class="mt-1" [control]="legacyControl()" />
     }
   </div>
 </div>

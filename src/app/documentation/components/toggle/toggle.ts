@@ -52,13 +52,13 @@ export class Toggle {
 
     simple:
 `// TypeScript
-this.simple_form = this.fb.group({
-  notifications: [false],
-});
+// Signal Forms definition
+const notificationsModel = signal(false);
+const form = form(notificationsModel);
 
 // Template
 <dom-toggle
-  [form_group]="simple_form"
+  [form]="form"
   form_control="notifications"
   label="Email notifications"
 />`,
@@ -68,7 +68,7 @@ this.simple_form = this.fb.group({
 // Valid only when value === true (switched on).
 
 <dom-toggle
-  [form_group]="form"
+  [form]="form"
   form_control="required_field"
   label="Accept terms (required)"
 />`,
@@ -77,7 +77,7 @@ this.simple_form = this.fb.group({
 `// custom_label_field: [true]
 
 <dom-toggle
-  [form_group]="form"
+  [form]="form"
   form_control="custom_label_field"
   label="Dark mode"
   on_label="Enabled"
@@ -88,7 +88,7 @@ this.simple_form = this.fb.group({
 `// disabled_field: [false]
 
 <dom-toggle
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_field"
   label="Feature flag (disabled)"
   [is_disabled]="true"
@@ -96,7 +96,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-toggle
-  [form_group]="form"
+  [form]="form"
   form_control="active"
   (on_change)="handleChange($event)"
   (on_blur)="handleBlur($event)"
@@ -136,7 +136,13 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
-    { name: 'form_group',   type: 'FormGroup', default_val: 'required', description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',   type: 'FormGroup', default_val: 'required', description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control', type: 'string',    default_val: 'required', description: 'Key of the control inside the form group.' },
     { name: 'label',        type: 'string',    default_val: "''",       description: 'Label displayed above the toggle switch.' },
     { name: 'placeholder',  type: 'string',    default_val: "''",       description: 'Unused visually; reserved for form schema consistency.' },

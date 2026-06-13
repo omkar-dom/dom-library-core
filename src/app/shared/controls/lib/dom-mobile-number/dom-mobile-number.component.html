@@ -53,5 +53,9 @@
   }
 
   <!-- Error display -->
-  <dom-error class="ml-1 mt-1" [control]="control()" />
+  @if (form()) {
+    <dom-error class="ml-1 mt-1" [field]="field()" />
+  } @else if (form_group()) {
+    <dom-error class="ml-1 mt-1" [control]="legacyControl()" />
+  }
 </div>

@@ -56,13 +56,13 @@ export class InputTextarea {
 
     simple:
 `// TypeScript
-this.simple_form = this.fb.group({
-  description: ['', Validators.required],
-});
+// Signal Forms definition
+const descriptionModel = signal('');
+const form = form(descriptionModel, Validators.required);
 
 // Template
 <dom-inputarea
-  [form_group]="simple_form"
+  [form]="form"
   form_control="description"
   label="Description"
   placeholder="Enter a description..."
@@ -72,7 +72,7 @@ this.simple_form = this.fb.group({
 `// maxlength_field: ['', Validators.maxLength(200)]
 
 <dom-inputarea
-  [form_group]="form"
+  [form]="form"
   form_control="maxlength_field"
   label="Bio (max 200 chars)"
   placeholder="Tell us about yourself..."
@@ -84,7 +84,7 @@ this.simple_form = this.fb.group({
 `// rows_field: ['']
 
 <dom-inputarea
-  [form_group]="form"
+  [form]="form"
   form_control="rows_field"
   label="Notes"
   placeholder="Enter extended notes..."
@@ -95,7 +95,7 @@ this.simple_form = this.fb.group({
 `// readonly_field: ['Pre-filled read-only content']
 
 <dom-inputarea
-  [form_group]="form"
+  [form]="form"
   form_control="readonly_field"
   label="Terms of Service"
   [is_readonly]="true"
@@ -106,7 +106,7 @@ this.simple_form = this.fb.group({
 `// hint_field: ['']
 
 <dom-inputarea
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Comments"
   placeholder="Any additional comments..."
@@ -115,7 +115,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-inputarea
-  [form_group]="form"
+  [form]="form"
   form_control="notes"
   (on_change)="handleChange($event)"
   (on_blur)="handleBlur($event)"
@@ -169,7 +169,13 @@ this.simple_form = this.fb.group({
   // ─── API tab ─────────────────────────────────────────────────────────────────
 
   readonly api_inputs = [
-    { name: 'form_group',   type: 'FormGroup', default_val: 'required', description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',   type: 'FormGroup', default_val: 'required', description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control', type: 'string',    default_val: 'required', description: 'Key of the control inside the form group.' },
     { name: 'label',        type: 'string',    default_val: "''",       description: 'Label displayed above the textarea.' },
     { name: 'placeholder',  type: 'string',    default_val: "''",       description: 'Placeholder text shown inside the textarea.' },

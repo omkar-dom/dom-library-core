@@ -111,7 +111,9 @@
     <p class="text-[11px] text-slate-400 mt-0.5 select-none">{{ hint() }}</p>
   }
 
-  @if (control().invalid && control().touched) {
-    <dom-error class="mt-1" [control]="control()" />
+  @if (form()) {
+    <dom-error class="mt-1" [field]="field()" />
+  } @else if (form_group()) {
+    <dom-error class="mt-1" [control]="legacyControl()" />
   }
 </div>

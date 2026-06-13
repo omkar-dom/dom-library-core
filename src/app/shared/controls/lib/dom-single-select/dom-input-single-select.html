@@ -63,17 +63,17 @@
         <!-- Options List -->
         <div class="overflow-y-auto py-1 flex-1">
           @for (option of filteredOptions(); track option[id_property()] ?? $index) {
-            <div
+             <div
               (click)="selectOption(option)"
               class="px-3 py-1.5 text-xs cursor-pointer flex items-center justify-between transition-colors select-none"
-              [class.bg-indigo-50/50]="option[id_property()] === control().value"
-              [class.text-indigo-600]="option[id_property()] === control().value"
-              [class.font-medium]="option[id_property()] === control().value"
-              [class.text-slate-600]="option[id_property()] !== control().value"
-              [class.hover:bg-slate-50]="option[id_property()] !== control().value"
+              [class.bg-indigo-50/50]="option[id_property()] === currentValue()"
+              [class.text-indigo-600]="option[id_property()] === currentValue()"
+              [class.font-medium]="option[id_property()] === currentValue()"
+              [class.text-slate-600]="option[id_property()] !== currentValue()"
+              [class.hover:bg-slate-50]="option[id_property()] !== currentValue()"
             >
               <span class="truncate">{{ option[title_property()] }}</span>
-              @if (option[id_property()] === control().value) {
+              @if (option[id_property()] === currentValue()) {
                 <i class="fa-solid fa-check text-[10px] text-indigo-500 shrink-0 ml-2"></i>
               }
             </div>
@@ -91,7 +91,9 @@
     <p class="text-[11px] text-slate-400 mt-0.5 select-none">{{ hint() }}</p>
   }
 
-  @if (control().invalid && control().touched) {
-    <dom-error class="mt-1" [control]="control()" />
+  @if (form()) {
+    <dom-error class="mt-1" [field]="field()" />
+  } @else if (form_group()) {
+    <dom-error class="mt-1" [control]="legacyControl()" />
   }
 </div>

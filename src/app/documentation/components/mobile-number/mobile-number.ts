@@ -46,14 +46,14 @@ this.form = this.fb.group({
 
 // HTML Default Usage
 <dom-mobile-number
-  [form_group]="form"
+  [form]="form"
   form_control="phone"
   label="Phone Number"
   default_country="IN"
 />`,
     custom: `<!-- Customized dial list option -->
 <dom-mobile-number
-  [form_group]="form"
+  [form]="form"
   form_control="phone"
   [custom_countries]="custom_list"
   label="Office Hotlines"
@@ -61,6 +61,12 @@ this.form = this.fb.group({
   };
 
   readonly api_inputs = [
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
     { name: 'form_group', type: 'FormGroup', default_val: 'required', description: 'Parent Reactive Form group containing the control.' },
     { name: 'form_control', type: 'string', default_val: 'required', description: 'Form Control string key.' },
     { name: 'label', type: 'string', default_val: "''", description: 'Field header label text.' },

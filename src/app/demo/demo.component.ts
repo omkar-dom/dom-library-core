@@ -5,13 +5,8 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { domDateMax, domDateMin } from '../shared/controls/lib/date-format.util';
 import { CommonModule } from '@angular/common';
+import { form, FormRoot } from '@angular/forms/signals';
 import {
   DomInputComponent,
   DomInputNumberComponent,
@@ -34,23 +29,30 @@ import {
   DomNameBuddyComponent,
 } from '../shared/controls/public-api';
 
+import {
+  DEPARTMENT_OPTIONS,
+  EMPLOYMENT_TYPE_OPTIONS,
+  SKILL_OPTIONS,
+  createEmptyEmployee,
+  createEmptyEmergencyContact,
+  Employee,
+} from './employee.model';
+import { applyEmployeeValidators } from './employee-form.schema';
+
 @Component({
   selector: 'app-demo',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    FormRoot,
     DomInputComponent,
     DomInputNumberComponent,
-    DomTextareaComponent,
     DomCheckboxComponent,
-    DomToggleComponent,
     DomRadioComponent,
     DomSingleSelectComponent,
     DomMultiSelectComponent,
     DomDatePickerComponent,
-    DomDateTimePickerComponent,
     DomDrawerComponent,
     DomDialogComponent,
     DomSelectButtonComponent,
@@ -58,12 +60,10 @@ import {
     DomTooltipDirective,
     DomSkeletonDirective,
     DomMobileNumberComponent,
-    DomNameBuddyComponent,
   ],
   templateUrl: './demo.component.html',
 })
 export class DemoComponent {
-  private readonly fb = inject(FormBuilder);
   private readonly toast = inject(DomToastService);
 
   readonly today = new Date();
@@ -89,82 +89,34 @@ export class DemoComponent {
     { title: 'Hardware Accelerated', desc: 'High frame-rate carousel transitions', bg: 'from-emerald-500 to-teal-700' },
   ];
 
-  // Primary reactive form featuring Name Buddy and Mobile Number
-  readonly form = this.fb.group({
-    salutation:    ['Mr.'],
-    first_name:    ['', [Validators.required, Validators.maxLength(30)]],
-    middle_name:   [''],
-    last_name:     ['', [Validators.required, Validators.maxLength(30)]],
-    email:         ['', [Validators.required, Validators.email]],
-    password:      ['', [Validators.required, Validators.minLength(8)]],
-    mobile_phone:  ['', [Validators.required]], // Managed by DomMobileNumberComponent
-    age:           [null as number | null, [Validators.required, Validators.min(18), Validators.max(99)]],
-    price:         [null as number | null, [Validators.required, Validators.min(0)]],
-    description:   ['', [Validators.required, Validators.maxLength(300)]],
-    agree:         [false, [Validators.requiredTrue]],
-    notifications: [[] as string[], [Validators.required]],
-    language:      ['', [Validators.required]],
-    active:        [false, [Validators.required]],
-    gender:        ['', [Validators.required]],
-    country:       [null as number | null, [Validators.required]],
-    layout_mode:   ['vertical'],
-    birth_date: [
-      '',
-      [
-        Validators.required,
-        domDateMin('1900-01-01'),
-        domDateMax('2026-05-20'),
-      ],
-    ],
-    appointment: [
-      '',
-      [
-        Validators.required,
-        domDateMin('2026-05-20 00:00', { isDateTime: true }),
-        domDateMax('2026-05-27 23:59', { isDateTime: true }),
-      ],
-    ],
-  });
+  // Options for form selects and radios
+  protected readonly departmentOptions = [...DEPARTMENT_OPTIONS];
+  protected readonly skillOptions = [...SKILL_OPTIONS];
+  protected readonly employmentTypeOptions = [...EMPLOYMENT_TYPE_OPTIONS];
 
-  readonly layout = computed(() => this.form.get('layout_mode')?.value as 'horizontal' | 'vertical' || 'vertical');
+  // Preferences form for setting horizontal/vertical preference
+  protected readonly prefModel = signal({ layout_mode: 'vertical' });
+  protected readonly prefForm = form(this.prefModel);
 
-  readonly notificationOptions = [
-    { id: 'Email',    title: 'Email'    },
-    { id: 'SMS',      title: 'SMS'      },
-    { id: 'Push',     title: 'Push'     },
-    { id: 'WhatsApp', title: 'WhatsApp' }
-  ];
+  // Employee Form
+  protected readonly employeeModel = signal<Employee>(createEmptyEmployee());
+  protected readonly employeeForm = form(this.employeeModel, applyEmployeeValidators);
 
-  readonly genderOptions = [
-    { label: 'Male',   value: 'male'   },
-    { label: 'Female', value: 'female' },
-    { label: 'Other',  value: 'other'  },
-  ];
+  readonly layout = computed(() => this.prefModel().layout_mode as 'horizontal' | 'vertical');
 
-  readonly languageOptions = [
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-    { code: 'it', name: 'Italian' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'ja', name: 'Japanese' },
-    { code: 'ko', name: 'Korean' },
-    { code: 'zh', name: 'Chinese' },
-  ];
+  protected addEmergencyContact(): void {
+    this.employeeModel.update((employee) => ({
+      ...employee,
+      emergencyContacts: [...employee.emergencyContacts, createEmptyEmergencyContact()],
+    }));
+  }
 
-  readonly countryOptions = computed(() => {
-    const countries: { code: number; title: string }[] = [];
-    for (let i = 0; i < 20; i++) {
-      countries.push({
-        code: i,
-        title: `Country ${i + 1}`,
-      });
-    }
-    return countries;
-  });
+  protected removeEmergencyContact(index: number): void {
+    this.employeeModel.update((employee) => ({
+      ...employee,
+      emergencyContacts: employee.emergencyContacts.filter((_, i) => i !== index),
+    }));
+  }
 
   // Action Toast Triggers
   triggerToast(type: 'success' | 'error' | 'warning' | 'info'): void {
@@ -216,48 +168,22 @@ export class DemoComponent {
   }
 
   toggleLayout(): void {
-    const current = this.form.get('layout_mode')?.value;
-    this.form.get('layout_mode')?.setValue(current === 'horizontal' ? 'vertical' : 'horizontal');
-  }
-
-  onCountryChange(event: number): void {
-    console.log('Country changed:', event);
-  }
-
-  onLanguageChange(event: any): void {
-    console.log('Language changed:', event);
+    const current = this.prefModel().layout_mode;
+    this.prefModel.set({ layout_mode: current === 'horizontal' ? 'vertical' : 'horizontal' });
   }
 
   submit(): void {
-    this.form.markAllAsTouched();
-    if (this.form.valid) {
-      this.toast.show('Form Submitted Successfully!', { type: 'success' });
-      console.log('Form Values:', this.form.value);
-    } else {
+    this.employeeForm().markAsTouched();
+    if (this.employeeForm().invalid()) {
       this.toast.show('Please fix the errors in the form.', { type: 'error' });
+      return;
     }
+    this.toast.show('Form Submitted Successfully!', { type: 'success' });
+    console.log('Form Values:', this.employeeModel());
   }
 
   reset(): void {
-    this.form.reset({
-      salutation:    'Mr.',
-      first_name:    '',
-      middle_name:   '',
-      last_name:     '',
-      email:         '',
-      password:      '',
-      mobile_phone:  '',
-      age:           null,
-      price:         null,
-      description:   '',
-      agree:         false,
-      notifications: [],
-      active:        false,
-      gender:        '',
-      country:       null,
-      birth_date:    '',
-      appointment:   '',
-      layout_mode:   'vertical',
-    });
+    this.employeeModel.set(createEmptyEmployee());
+    this.employeeForm().reset();
   }
 }

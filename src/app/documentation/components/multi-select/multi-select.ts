@@ -81,13 +81,13 @@ readonly tag_options = [
   { id: 'react',   title: 'React'   },
   { id: 'vue',     title: 'Vue'     },
 ];
-this.simple_form = this.fb.group({
-  tags: [[], Validators.required],
-});
+// Signal Forms definition
+const tagsModel = signal([]);
+const form = form(tagsModel, Validators.required);
 
 // Template
 <dom-multi-select
-  [form_group]="simple_form"
+  [form]="form"
   form_control="tags"
   label="Technologies"
   [options]="tag_options"
@@ -97,7 +97,7 @@ this.simple_form = this.fb.group({
 `// hint_field: [[]]
 
 <dom-multi-select
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Categories"
   hint="Select all that apply"
@@ -108,7 +108,7 @@ this.simple_form = this.fb.group({
 `// disabled_field: [['frontend', 'backend']]
 
 <dom-multi-select
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_field"
   label="Categories (disabled)"
   [options]="category_options"
@@ -117,7 +117,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-multi-select
-  [form_group]="form"
+  [form]="form"
   form_control="tags"
   [options]="tag_options"
   (on_change)="handleChange($event)"  <!-- emits T[] of selected objects -->
@@ -150,7 +150,13 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
-    { name: 'form_group',     type: 'FormGroup', default_val: 'required',               description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',     type: 'FormGroup', default_val: 'required',               description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control',   type: 'string',    default_val: 'required',               description: 'Key of the control inside the form group.' },
     { name: 'options',        type: 'T[]',        default_val: 'required',               description: 'Array of option objects rendered in the panel.' },
     { name: 'id_property',    type: 'string',    default_val: "'id'",                   description: 'Object key stored in the form value array when an option is selected.' },

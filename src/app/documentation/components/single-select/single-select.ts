@@ -80,13 +80,13 @@ readonly country_options = [
   { id: 'uk', title: 'United Kingdom' },
   { id: 'in', title: 'India' },
 ];
-this.simple_form = this.fb.group({
-  country: [null, Validators.required],
-});
+// Signal Forms definition
+const countryModel = signal(null);
+const form = form(countryModel, Validators.required);
 
 // Template
 <dom-single-select
-  [form_group]="simple_form"
+  [form]="form"
   form_control="country"
   label="Country"
   [options]="country_options"
@@ -96,7 +96,7 @@ this.simple_form = this.fb.group({
 `// disabled_field: [null]
 
 <dom-single-select
-  [form_group]="form"
+  [form]="form"
   form_control="disabled_field"
   label="Country (disabled)"
   [options]="country_options"
@@ -107,7 +107,7 @@ this.simple_form = this.fb.group({
 `// hint_field: [null, Validators.required]
 
 <dom-single-select
-  [form_group]="form"
+  [form]="form"
   form_control="hint_field"
   label="Country"
   hint="Select the country of residence"
@@ -122,7 +122,7 @@ this.simple_form = this.fb.group({
 // custom_keys_field: [null, Validators.required]
 
 <dom-single-select
-  [form_group]="form"
+  [form]="form"
   form_control="custom_keys_field"
   label="Role"
   id_property="role_id"
@@ -132,7 +132,7 @@ this.simple_form = this.fb.group({
 
     outputs:
 `<dom-single-select
-  [form_group]="form"
+  [form]="form"
   form_control="country"
   [options]="country_options"
   (on_change)="handleChange($event)"
@@ -171,7 +171,13 @@ this.simple_form = this.fb.group({
   ];
 
   readonly api_inputs = [
-    { name: 'form_group',     type: 'FormGroup', default_val: 'required',               description: 'Parent reactive form group that owns the control.' },
+    {
+      name: 'form',
+      type: 'FieldTree',
+      default_val: 'required',
+      description: 'Signal Forms FieldTree proxy node representing the parent form state.'
+    },
+    { name: 'form_group',     type: 'FormGroup', default_val: 'required',               description: 'Parent reactive form group (legacy fallback mode).' },
     { name: 'form_control',   type: 'string',    default_val: 'required',               description: 'Key of the control inside the form group.' },
     { name: 'options',        type: 'T[]',        default_val: 'required',               description: 'Array of option objects to render in the dropdown.' },
     { name: 'id_property',    type: 'string',    default_val: "'id'",                   description: 'Object key used as the stored form value when an option is selected.' },

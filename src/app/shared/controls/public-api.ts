@@ -22,3 +22,5 @@ export * from './lib/dom-tooltip/dom-tooltip.directive';
 export * from './lib/dom-skeleton/dom-skeleton.directive';
 export * from './lib/dom-mobile-number/dom-mobile-number.component';
 export * from './lib/dom-name-buddy/dom-name-buddy.component';
+export * from './lib/form-control.utils';
+export * from './lib/form-field.pipes';
